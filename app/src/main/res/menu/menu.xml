@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/UserAccount"
+            android:icon="@drawable/ic_person_white"
+            android:title="Your account" />
+
+        <item
+            android:id="@+id/ongoingEvent"
+            android:icon="@drawable/ic_ongoing_event"
+            android:title="Enevts" />
+
+        <item
+            android:id="@+id/recentAndUpcommingEvents"
+            android:icon="@drawable/ic_upcomming_recent_event_white"
+            android:title="Recent/Upcomming Events" />
+        <item
+            android:id="@+id/aboutUs"
+            android:icon="@drawable/ic_about_us_white"
+            android:title="About Us" />
+
+    </group>
+    <item android:title="">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/contactUs"
+                    android:icon="@drawable/ic_contact_us_white"
+                    android:title="Contact Us" />
+                <item
+                    android:id="@+id/logout"
+                    android:icon="@drawable/ic_logout_white"
+                    android:title="Logout" />
+            </group>
+        </menu>
+    </item>
+
+</menu>
