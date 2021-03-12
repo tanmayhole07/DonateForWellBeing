@@ -50,7 +50,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
         ongoingEventsCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(AdminDashboardActivity.this, "ongoingEventsCv clicked", Toast.LENGTH_SHORT).show();
                 startActivity(new Intent(AdminDashboardActivity.this, OngoingEventsActivity.class));
             }
         });
@@ -58,8 +57,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
         upcommingEventsCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(AdminDashboardActivity.this, "upcommingEventsCv clicked", Toast.LENGTH_SHORT).show();
-
                 startActivity(new Intent(AdminDashboardActivity.this, UpcommingEventsActivity.class));
             }
         });
@@ -67,8 +64,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
         recentEventsCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(AdminDashboardActivity.this, "recentEventsCv clicked", Toast.LENGTH_SHORT).show();
-
                 startActivity(new Intent(AdminDashboardActivity.this, RecentEventsActivity.class));
             }
         });
@@ -76,8 +71,6 @@ public class AdminDashboardActivity extends AppCompatActivity {
         adminProfileCv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(AdminDashboardActivity.this, "adminProfileCv clicked", Toast.LENGTH_SHORT).show();
-
                 startActivity(new Intent(AdminDashboardActivity.this, AdminProfileActivity.class));
             }
         });
