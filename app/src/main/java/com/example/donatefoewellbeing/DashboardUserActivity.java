@@ -67,7 +67,7 @@ public class DashboardUserActivity extends AppCompatActivity {
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
             TextView textView = (TextView) toolbar.findViewById(R.id.toolbarTextView);
-            textView.setText("Ecstasy");
+            textView.setText("DFW");
 
             getSupportActionBar().setDisplayShowTitleEnabled(false);
 

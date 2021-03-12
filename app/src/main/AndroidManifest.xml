@@ -16,16 +16,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".AdminDashboardActivity" />
-        <activity
-            android:name=".DashboardUserActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".Activities.AdminProfileActivity"></activity>
+        <activity android:name=".Activities.RecentEventsActivity" />
+        <activity android:name=".Activities.UpcommingEventsActivity" />
+        <activity android:name=".Activities.OngoingEventsActivity" />
+        <activity android:name=".Activities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".AdminDashboardActivity" />
+        <activity
+            android:name=".DashboardUserActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".LoginActivity" />
     </application>
 
