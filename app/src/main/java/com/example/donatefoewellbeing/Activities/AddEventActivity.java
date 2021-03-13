@@ -212,6 +212,7 @@ public class AddEventActivity extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
                                                 pd.dismiss();
                                                 Toast.makeText(AddEventActivity.this, "Updated...", Toast.LENGTH_SHORT).show();
+                                                startActivity(new Intent(AddEventActivity.this, OngoingEventsActivity.class));
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
