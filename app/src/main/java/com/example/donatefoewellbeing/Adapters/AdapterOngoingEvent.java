@@ -1,6 +1,7 @@
 package com.example.donatefoewellbeing.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.donatefoewellbeing.Activities.AddEventActivity;
+import com.example.donatefoewellbeing.Activities.EventDescriptionActivity;
+import com.example.donatefoewellbeing.Activities.OngoingEventsActivity;
 import com.example.donatefoewellbeing.Models.ModelOngoingEvent;
 import com.example.donatefoewellbeing.R;
 import com.google.firebase.database.ValueEventListener;
@@ -45,17 +49,28 @@ public class AdapterOngoingEvent extends RecyclerView.Adapter<AdapterOngoingEven
         String eventDate = modelOngoingEvent.getDate();
         String organizationName = modelOngoingEvent.getEventOrganizationName();
         String eventImage = modelOngoingEvent.getEventImage();
+        String eventId = modelOngoingEvent.getTimeStamp();
 
         holder.eventNameTv.setText(eventName);
         holder.eventDescriptionTv.setText(eventDescription);
         holder.eventDateTv.setText(eventDate);
         holder.organizationNameTv.setText(organizationName);
 
+
         try {
             Picasso.get().load(eventImage).placeholder(R.drawable.ic_photo_grey).into(holder.eventIv);
-        }catch (Exception e){
+        } catch (Exception e) {
             holder.eventIv.setImageResource(R.drawable.ic_photo_grey);
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, EventDescriptionActivity.class);
+                intent.putExtra("eventId", eventId);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -63,7 +78,7 @@ public class AdapterOngoingEvent extends RecyclerView.Adapter<AdapterOngoingEven
         return ongoingEventList.size();
     }
 
-    class HolderOngoingEvent extends RecyclerView.ViewHolder{
+    class HolderOngoingEvent extends RecyclerView.ViewHolder {
 
         private ImageView eventIv, nextIv;
         private TextView eventNameTv, eventDescriptionTv, eventDateTv, organizationNameTv;

@@ -16,7 +16,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".Activities.AddEventActivity"></activity>
+        <activity android:name=".Activities.EditEventActivity"></activity>
+        <activity android:name=".Activities.EventDescriptionActivity" />
+        <activity android:name=".Activities.AddEventActivity" />
         <activity android:name=".Activities.AdminProfileActivity" />
         <activity android:name=".Activities.RecentEventsActivity" />
         <activity android:name=".Activities.UpcommingEventsActivity" />
