@@ -296,9 +296,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/poppins_light"
+                android:drawableEnd="@drawable/ic_map_blue"
+                android:layout_marginEnd="10dp"
                 android:text=""
                 android:textColor="@color/black"
-                android:textSize="12sp" />
+                android:textSize="12sp" >
+
+            </TextView>
+
+
+
+
+
 
 
         </LinearLayout>

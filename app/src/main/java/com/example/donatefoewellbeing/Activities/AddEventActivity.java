@@ -4,30 +4,52 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.donatefoewellbeing.LoginActivity;
+import com.example.donatefoewellbeing.ModelTask;
 import com.example.donatefoewellbeing.R;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -36,13 +58,23 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
-public class AddEventActivity extends AppCompatActivity {
+public class AddEventActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private ImageView eventPicIv;
     private EditText eventNameEt, eventDescriptionEt, eventOrganizationNameEt, dateEt, timeEt, eventLocationEt;
     private Button addEventBtn;
+    private ImageButton backBtn;
+    private FloatingActionButton step1CompleteFab;
+
+    private ConstraintLayout layout_add_product_1, layout_add_product_2;
+
+    private GoogleMap mMap;
+    PlaceAutocompleteFragment placeAutoComplete;
 
     //permission constants
     private static final int CAMERA_REQUEST_CODE = 200;
@@ -56,6 +88,16 @@ public class AddEventActivity extends AppCompatActivity {
     private String[] cameraPermissions;
     private String[] storagePermissions;
 
+    ModelTask model = new ModelTask();
+    private LatLng ltl = new LatLng(36.7783, 119.4179);
+    private int taskFlag = 0;
+    String Latitude, Longitude;
+    LatLng oldlatLng;
+    Marker oldMarker;
+    Marker newMarkr;
+
+
+    ModelTask passedIntent = new ModelTask();
 
     private Uri image_uri;
     private ProgressDialog pd;
@@ -63,6 +105,7 @@ public class AddEventActivity extends AppCompatActivity {
 
     //Firebase Variables
     FirebaseAuth firebaseAuth;
+    final Calendar myCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +119,75 @@ public class AddEventActivity extends AppCompatActivity {
         dateEt = findViewById(R.id.dateEt);
         timeEt = findViewById(R.id.timeEt);
         eventLocationEt = findViewById(R.id.eventLocationEt);
+        step1CompleteFab = findViewById(R.id.step1CompleteFab);
+        backBtn = findViewById(R.id.backBtn);
+
         addEventBtn = findViewById(R.id.addEventBtn);
+        layout_add_product_1 = findViewById(R.id.layout_add_product_1);
+        layout_add_product_2 = findViewById(R.id.layout_add_product_2);
+
+        passedIntent = (ModelTask) getIntent().getSerializableExtra("clickedData");
+        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabel();
+            }
+        };
+
+        addEventBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                inputData2();
+            }
+        });
+
+        dateEt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(AddEventActivity.this, date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        timeEt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(AddEventActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        timeEt.setText(selectedHour + ":" + selectedMinute);
+                    }
+                }, hour, minute, true);//Yes 24 hour time
+                mTimePicker.setTitle("Select Time");
+                mTimePicker.show();
+
+            }
+        });
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         eventPicIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,10 +196,10 @@ public class AddEventActivity extends AppCompatActivity {
             }
         });
 
-        addEventBtn.setOnClickListener(new View.OnClickListener() {
+        step1CompleteFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                inputData();
+                inputData1();
             }
         });
 
@@ -97,22 +208,67 @@ public class AddEventActivity extends AppCompatActivity {
         pd.setCanceledOnTouchOutside(false);
         firebaseAuth = FirebaseAuth.getInstance();
 
+        if(passedIntent != null){
+             oldlatLng = new LatLng(passedIntent.getLatitude(),passedIntent.getLongitude());
+        }
+
+//        Places.initialize(getApplicationContext(), "AIzaSyDAksT1L6mUK7tjcGIDlym8B9cjh5aucsg");
+//        eventLocationEt.setFocusable(false);
+//        eventLocationEt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                List<com.google.android.libraries.places.api.model.Place.Field> fieldList = Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ADDRESS,
+//                        com.google.android.libraries.places.api.model.Place.Field.LAT_LNG, com.google.android.libraries.places.api.model.Place.Field.NAME);
+//
+//                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY,
+//                        fieldList).build(AddEventActivity.this);
+//
+//                startActivityForResult(intent, 100);
+//            }
+//        });
+
+//        placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.eventLocationEt);
+//        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//            @Override
+//            public void onPlaceSelected(Place place) {
+//                addMarker(place);
+//                Log.d("Maps", "Place selected: " + place.getName());
+//            }
+//
+//            @Override
+//            public void onError(Status status) {
+//                Log.d("Maps", "An error occurred: " + status);
+//            }
+//        });
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
 
         checkUserStatus();
 
     }
 
+
+
+    private void updateLabel() {
+        String myFormat = "dd/MM/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        dateEt.setText(sdf.format(myCalendar.getTime()));
+    }
+
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     private String eventName, eventDescription, eventOrganizationName, date, time, eventLocation;
-    private void inputData() {
+
+    private void inputData1() {
 
         eventName = eventNameEt.getText().toString().trim();
         eventDescription = eventDescriptionEt.getText().toString().trim();
         eventOrganizationName = eventOrganizationNameEt.getText().toString().trim();
         date = dateEt.getText().toString().trim();
         time = timeEt.getText().toString().trim();
-        eventLocation = eventLocationEt.getText().toString().trim();
 
         if (TextUtils.isEmpty(eventName)) {
             Toast.makeText(AddEventActivity.this, "Event Name is required...", Toast.LENGTH_SHORT).show();
@@ -139,18 +295,34 @@ public class AddEventActivity extends AppCompatActivity {
             return;
         }
 
+
+        layout2();
+
+    }
+
+    private void inputData2() {
+        eventLocation = eventLocationEt.getText().toString().trim();
         if (TextUtils.isEmpty(eventLocation)) {
-            Toast.makeText(AddEventActivity.this, "Event Location is required...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddEventActivity.this, "Event time is required...", Toast.LENGTH_SHORT).show();
             return;
         }
 
         addEvent();
+    }
 
+    private void layout2() {
+        layout_add_product_2.setVisibility(View.VISIBLE);
+        layout_add_product_1.setVisibility(View.GONE);
+    }
+
+    private void layout1() {
+        layout_add_product_2.setVisibility(View.GONE);
+        layout_add_product_1.setVisibility(View.VISIBLE);
     }
 
     private void addEvent() {
         pd.setMessage("Adding Event");
-        if (image_uri==null){
+        if (image_uri == null) {
 
             final String timeStamp = "" + System.currentTimeMillis();
 
@@ -162,6 +334,8 @@ public class AddEventActivity extends AppCompatActivity {
             hashMap.put("time", "" + time);
             hashMap.put("eventLocation", "" + eventLocation);
             hashMap.put("timeStamp", "" + timeStamp);
+            hashMap.put("latitude", "" + model.getLatitude());
+            hashMap.put("longitude", "" + model.getLongitude());
 
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
             ref.child("OngoingEvents").child(timeStamp)
@@ -171,29 +345,30 @@ public class AddEventActivity extends AppCompatActivity {
                         public void onSuccess(Void aVoid) {
                             pd.dismiss();
                             Toast.makeText(AddEventActivity.this, "Updated...", Toast.LENGTH_SHORT).show();
+                            onBackPressed();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             pd.dismiss();
-                            Toast.makeText(AddEventActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddEventActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
-        }else {
+        } else {
             final String timeStamp = "" + System.currentTimeMillis();
 
-            String filePathAndName = "event_images/" +""+timeStamp;
+            String filePathAndName = "event_images/" + "" + timeStamp;
             StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathAndName);
             storageReference.putFile(image_uri)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
-                            while (!uriTask.isSuccessful());
+                            while (!uriTask.isSuccessful()) ;
                             Uri downloadImageUri = uriTask.getResult();
 
-                            if (uriTask.isSuccessful()){
+                            if (uriTask.isSuccessful()) {
                                 HashMap<String, Object> hashMap = new HashMap<>();
                                 hashMap.put("eventName", "" + eventName);
                                 hashMap.put("eventImage", "" + downloadImageUri);
@@ -203,6 +378,8 @@ public class AddEventActivity extends AppCompatActivity {
                                 hashMap.put("time", "" + time);
                                 hashMap.put("eventLocation", "" + eventLocation);
                                 hashMap.put("timeStamp", "" + timeStamp);
+                                hashMap.put("latitude", "" + model.getLatitude());
+                                hashMap.put("longitude", "" + model.getLongitude());
 
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
                                 ref.child("OngoingEvents").child(timeStamp)
@@ -212,14 +389,14 @@ public class AddEventActivity extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
                                                 pd.dismiss();
                                                 Toast.makeText(AddEventActivity.this, "Updated...", Toast.LENGTH_SHORT).show();
-                                                startActivity(new Intent(AddEventActivity.this, OngoingEventsActivity.class));
+                                                onBackPressed();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
                                                 pd.dismiss();
-                                                Toast.makeText(AddEventActivity.this, ""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(AddEventActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         });
                             }
@@ -247,18 +424,18 @@ public class AddEventActivity extends AppCompatActivity {
                 .setItems(options, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        if (i==0){
+                        if (i == 0) {
                             //camera clicked
-                            if (checkCameraPermission()){
+                            if (checkCameraPermission()) {
                                 pickFromCamera();
-                            }else {
+                            } else {
                                 requestCameraPermission();
                             }
-                        }else {
+                        } else {
                             //gallery clicked
-                            if (checkStoragePermission()){
+                            if (checkStoragePermission()) {
                                 pickFromGallery();
-                            }else {
+                            } else {
                                 requestStoragePermission();
                             }
                         }
@@ -267,10 +444,10 @@ public class AddEventActivity extends AppCompatActivity {
 
     }
 
-    private void pickFromCamera(){
+    private void pickFromCamera() {
         ContentValues cv = new ContentValues();
-        cv.put(MediaStore.Images.Media.TITLE,"Temp_Image Title");
-        cv.put(MediaStore.Images.Media.DESCRIPTION,"Temp_Image Description");
+        cv.put(MediaStore.Images.Media.TITLE, "Temp_Image Title");
+        cv.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image Description");
 
         image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
 
@@ -279,32 +456,32 @@ public class AddEventActivity extends AppCompatActivity {
         startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
     }
 
-    private void pickFromGallery(){
+    private void pickFromGallery() {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType("image/*");
         startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
     }
 
-    private boolean checkStoragePermission(){
+    private boolean checkStoragePermission() {
         boolean result = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE)==(PackageManager.PERMISSION_GRANTED);
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
         return result;
     }
 
-    private void requestStoragePermission(){
+    private void requestStoragePermission() {
         ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
     }
 
-    private boolean checkCameraPermission(){
+    private boolean checkCameraPermission() {
         boolean result = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA)==(PackageManager.PERMISSION_GRANTED);
+                Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
 
         boolean result1 = ContextCompat.checkSelfPermission(this,
-                Manifest.permission.CAMERA)==(PackageManager.PERMISSION_GRANTED);
+                Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
         return result && result1;
     }
 
-    private void requestCameraPermission(){
+    private void requestCameraPermission() {
         ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
     }
 
@@ -315,27 +492,27 @@ public class AddEventActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode){
+        switch (requestCode) {
 
-            case CAMERA_REQUEST_CODE:{
-                if(grantResults.length>0){
-                    boolean cameraAccepted = grantResults[0]== PackageManager.PERMISSION_GRANTED;
-                    boolean storageAccepted = grantResults[1]==PackageManager.PERMISSION_GRANTED;
-                    if (cameraAccepted && storageAccepted){
+            case CAMERA_REQUEST_CODE: {
+                if (grantResults.length > 0) {
+                    boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    if (cameraAccepted && storageAccepted) {
                         pickFromCamera();
-                    }else {
+                    } else {
                         Toast.makeText(this, "Camera permission is required...", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
             break;
 
-            case STORAGE_REQUEST_CODE:{
-                if(grantResults.length>0){
-                    boolean storageAccepted = grantResults[0]==PackageManager.PERMISSION_GRANTED;
-                    if (storageAccepted){
+            case STORAGE_REQUEST_CODE: {
+                if (grantResults.length > 0) {
+                    boolean storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    if (storageAccepted) {
                         pickFromGallery();
-                    }else {
+                    } else {
                         Toast.makeText(this, "Storage permission is required...", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -348,17 +525,26 @@ public class AddEventActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
 
-        if (resultCode==RESULT_OK){
-            if (requestCode == IMAGE_PICK_GALLERY_CODE){
+        if (resultCode == RESULT_OK) {
+            if (requestCode == IMAGE_PICK_GALLERY_CODE) {
                 image_uri = data.getData();
                 eventPicIv.setImageURI(image_uri);
-            }else if (requestCode == IMAGE_PICK_CAMERA_CODE){
+            } else if (requestCode == IMAGE_PICK_CAMERA_CODE) {
                 eventPicIv.setImageURI(image_uri);
             }
         }
+
+//        if (resultCode == 100 && resultCode == RESULT_OK) {
+//            com.google.android.libraries.places.api.model.Place place = Autocomplete.getPlaceFromIntent(data);
+//            eventLocationEt.setText(place.getAddress());
+//            Toast.makeText(this, "Latitude and Longitude = " + place.getLatLng(), Toast.LENGTH_SHORT).show();
+//        } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+//            Status status = Autocomplete.getStatusFromIntent(data);
+//            Toast.makeText(getApplicationContext(), "" + status, Toast.LENGTH_SHORT).show();
+//
+//        }
         super.onActivityResult(requestCode, resultCode, data);
     }
-
 
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -367,7 +553,7 @@ public class AddEventActivity extends AppCompatActivity {
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             mUID = user.getUid();
-
+            layout1();
 
         } else {
             startActivity(new Intent(AddEventActivity.this, LoginActivity.class));
@@ -375,4 +561,93 @@ public class AddEventActivity extends AppCompatActivity {
         }
     }
 
+    public Location getLocation() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager != null) {
+
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            }
+            Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(currentLocation != null)
+                return currentLocation;
+            else{
+                currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                return currentLocation;
+            }
+        }
+        else{
+            // ask the user to turn on the GPS
+            return null;
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        taskFlag = 0;
+        // showing the current location
+        final Location location = getLocation();
+        LatLng currentLoc = new LatLng(location.getLatitude(),location.getLongitude());
+        if(passedIntent != null){
+
+            oldMarker = mMap.addMarker(new MarkerOptions().position(oldlatLng).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(oldlatLng,15));
+        }else{
+            newMarkr = mMap.addMarker(new MarkerOptions().position(currentLoc).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,15));
+
+        }
+
+        mMap.animateCamera(CameraUpdateFactory.zoomIn());
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+
+
+
+        // https://stackoverflow.com/questions/24302112/how-to-get-the-latitude-and-longitude-of-location-where-user-taps-on-the-map-in
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                // remove marker when new one added
+                if(taskFlag == 0) {
+                    taskFlag = 1;
+                    if(passedIntent != null){
+                        oldMarker.remove();
+                    }
+                    mMap.addMarker(new MarkerOptions().position(latLng).title("Custom location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                    CircleOptions circleOptions = new CircleOptions()
+                            .center(latLng)
+                            .radius(100)
+                            .fillColor(0x40ff0000)  //semi-transparent
+                            .strokeColor(Color.RED)
+                            .strokeWidth(5);
+                    mMap.addCircle(circleOptions);
+                    ltl = latLng;
+                    if(passedIntent != null){
+                        passedIntent.setLatitude(ltl.latitude);
+                        passedIntent.setLongitude(ltl.longitude);
+                    }else{
+                        model.setLatitude(ltl.latitude);
+                        model.setLongitude(ltl.longitude);
+                    }
+                }
+            }
+        });
+        
+    }
+
+//    public void addMarker(Place p) {
+//
+//        MarkerOptions markerOptions = new MarkerOptions();
+//
+//        markerOptions.position(p.getLatLng());
+//        markerOptions.title(p.getName() + "");
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+//
+//        mMap.addMarker(markerOptions);
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
+//        mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+//    }
 }

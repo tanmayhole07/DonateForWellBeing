@@ -8,7 +8,9 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,9 +21,12 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.example.donatefoewellbeing.LoginActivity;
@@ -41,7 +46,10 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 
 public class EditEventActivity extends AppCompatActivity {
 
@@ -49,6 +57,7 @@ public class EditEventActivity extends AppCompatActivity {
     private EditText eventNameEt, eventDescriptionEt, eventOrganizationNameEt, dateEt, timeEt, eventLocationEt;
     private TextView toolbarText;
     private Button updateEventBtn;
+    private ImageButton backBtn;
     String eventId;
 
     //permission constants
@@ -70,6 +79,7 @@ public class EditEventActivity extends AppCompatActivity {
 
     //Firebase Variables
     FirebaseAuth firebaseAuth;
+    final Calendar myCalendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +97,63 @@ public class EditEventActivity extends AppCompatActivity {
         eventLocationEt = findViewById(R.id.eventLocationEt);
         updateEventBtn = findViewById(R.id.addEventBtn);
         toolbarText = findViewById(R.id.toolbarText);
+        backBtn = findViewById(R.id.backBtn);
+
+        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabel();
+            }
+        };
+
+        dateEt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(EditEventActivity.this, date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+
+        timeEt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(EditEventActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        timeEt.setText( selectedHour + ":" + selectedMinute);
+                    }
+                }, hour, minute, true);//Yes 24 hour time
+                mTimePicker.setTitle("Select Time");
+                mTimePicker.show();
+
+            }
+        });
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
         eventPicIv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +178,14 @@ public class EditEventActivity extends AppCompatActivity {
         checkUserStatus();
 
     }
+
+    private void updateLabel() {
+        String myFormat = "dd/MM/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        dateEt.setText(sdf.format(myCalendar.getTime()));
+    }
+
 
     private String eventName, eventDescription, eventOrganizationName, date, time, eventLocation;
     private void inputData() {
@@ -178,6 +253,7 @@ public class EditEventActivity extends AppCompatActivity {
                         public void onSuccess(Void aVoid) {
                             pd.dismiss();
                             Toast.makeText(EditEventActivity.this, "Updated...", Toast.LENGTH_SHORT).show();
+                            onBackPressed();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -218,7 +294,7 @@ public class EditEventActivity extends AppCompatActivity {
                                             public void onSuccess(Void aVoid) {
                                                 pd.dismiss();
                                                 Toast.makeText(EditEventActivity.this, "Updated...", Toast.LENGTH_SHORT).show();
-                                                startActivity(new Intent(EditEventActivity.this, OngoingEventsActivity.class));
+                                                onBackPressed();
                                             }
                                         })
                                         .addOnFailureListener(new OnFailureListener() {

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView android:layout_height="match_parent"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_height="match_parent">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -22,133 +22,125 @@
         app:layout_constraintTop_toTopOf="parent">
 
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/eventPicIv"
-        android:layout_gravity="center"
-        android:layout_height="150dp"
-        android:layout_marginTop="10dp"
-        android:layout_width="150dp"
-        android:src="@drawable/add_product_image"
-        app:civ_border_color="@color/colorRed"
-        app:civ_border_width="2dp" />
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/eventPicIv"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/add_product_image"
+            app:civ_border_color="@color/colorRed"
+            app:civ_border_width="2dp" />
 
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/parent"
-        android:alpha=".6"
-        android:id="@+id/textInputProductName"
-        android:layout_marginTop="30dp">
-
-        <EditText
-            style="@style/modifiedEditText"
-            android:fontFamily="@font/poppins_light"
-            android:hint="Enter Event Name"
-            android:id="@+id/eventNameEt"
-            android:inputType="textPersonName|textCapWords"
-            android:maxLines="1"
-            android:textSize="12sp" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/parent"
-        android:alpha=".6"
-        android:id="@+id/textInputProductDescriptionEt"
-        android:layout_marginTop="2dp">
-
-        <EditText
-            style="@style/modifiedEditText"
-            android:fontFamily="@font/poppins_light"
-            android:hint="Enter Event Description"
-            android:id="@+id/eventDescriptionEt"
-            android:inputType="textCapSentences|textMultiLine"
-            android:maxLines="1"
-            android:textSize="12sp" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/parent"
-        android:alpha=".6"
-        android:id="@+id/textInputCategoryEt"
-        android:layout_marginTop="2dp">
-
-        <EditText
-            style="@style/modifiedEditText"
-            android:fontFamily="@font/poppins_light"
-            android:hint="Enter Organization Name"
-            android:id="@+id/eventOrganizationNameEt"
-            android:maxLines="1"
-            android:textSize="12sp" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <LinearLayout
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
-        android:layout_width="match_parent"
-        android:orientation="horizontal">
 
         <com.google.android.material.textfield.TextInputLayout
-
+            android:id="@+id/textInputProductName"
             style="@style/parent"
-            android:alpha=".6"
-            android:layout_marginEnd="1dp"
-            android:layout_weight="1">
+            android:layout_marginTop="30dp"
+            android:alpha=".6">
 
             <EditText
+                android:id="@+id/eventNameEt"
                 style="@style/modifiedEditText"
                 android:fontFamily="@font/poppins_light"
-                android:hint="Select Date"
-                android:id="@+id/dateEt"
-                android:inputType="date"
+                android:hint="Enter Event Name"
+                android:inputType="textPersonName|textCapWords"
                 android:maxLines="1"
                 android:textSize="12sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
-
+            android:id="@+id/textInputProductDescriptionEt"
             style="@style/parent"
-            android:alpha=".6"
-            android:layout_marginStart="1dp"
-            android:layout_weight="1">
+            android:layout_marginTop="2dp"
+            android:alpha=".6">
 
             <EditText
+                android:id="@+id/eventDescriptionEt"
                 style="@style/modifiedEditText"
                 android:fontFamily="@font/poppins_light"
-                android:hint="Select Time"
-                android:id="@+id/timeEt"
-                android:inputType="time"
+                android:hint="Enter Event Description"
+                android:inputType="textCapSentences|textMultiLine"
                 android:maxLines="1"
                 android:textSize="12sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-    </LinearLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textInputCategoryEt"
+            style="@style/parent"
+            android:layout_marginTop="2dp"
+            android:alpha=".6">
 
-    <com.google.android.material.textfield.TextInputLayout
-        style="@style/parent"
-        android:alpha=".6"
-        android:layout_marginTop="2dp">
+            <EditText
+                android:id="@+id/eventOrganizationNameEt"
+                style="@style/modifiedEditText"
+                android:fontFamily="@font/poppins_light"
+                android:hint="Enter Organization Name"
+                android:maxLines="1"
+                android:textSize="12sp" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <EditText
-            style="@style/modifiedEditText"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+
+                style="@style/parent"
+                android:layout_marginEnd="1dp"
+                android:layout_weight="1"
+                android:alpha=".6">
+
+                <EditText
+                    android:id="@+id/dateEt"
+                    style="@style/modifiedEditText"
+                    android:fontFamily="@font/poppins_light"
+                    android:hint="Select Date"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+
+                style="@style/parent"
+                android:layout_marginStart="1dp"
+                android:layout_weight="1"
+                android:alpha=".6">
+
+                <EditText
+                    android:id="@+id/timeEt"
+                    style="@style/modifiedEditText"
+                    android:fontFamily="@font/poppins_light"
+                    android:hint="Select Time"
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:textSize="12sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+
+
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/step1CompleteFab"
+            style="@style/loginButton"
+            android:layout_gravity="right"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="20dp"
+            android:src="@drawable/ic_next_blue"
+            android:backgroundTint="@color/primaryTextColor"
             android:fontFamily="@font/poppins_light"
-            android:hint="Enter Location"
-            android:id="@+id/eventLocationEt"
-            android:maxLines="1"
-            android:textSize="12sp" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <Button
-        style="@style/loginButton"
-        android:backgroundTint="@color/colorOrange"
-        android:fontFamily="@font/poppins_light"
-        android:id="@+id/addEventBtn"
-        android:layout_alignParentEnd="true"
-        android:layout_gravity="right"
-        android:layout_marginBottom="20dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginTop="50dp"
-        android:text="Add Event"
-        android:textSize="14sp" />
+            android:text="Add Event"
+            android:textSize="14sp" />
 
     </LinearLayout>
 

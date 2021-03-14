@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -20,10 +21,11 @@ import com.squareup.picasso.Picasso;
 
 public class EventDescriptionActivity extends AppCompatActivity {
 
-    private ImageView eventIv;
+    private ImageView eventIv, trackLocationMapTv;
     private TextView editTv, deleteTv, eventNameTv, eventDescriptionTv, eventDateTv, eventTimeTv, eventLocationTv, eventOrganizationNameTv;
 
-    private String eventId;
+    private String eventId, latitude, longitude;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +41,17 @@ public class EventDescriptionActivity extends AppCompatActivity {
         eventTimeTv = findViewById(R.id.eventTimeTv);
         eventLocationTv = findViewById(R.id.eventLocationTv);
         eventOrganizationNameTv = findViewById(R.id.eventOrganizationNameTv);
+//        trackLocationMapTv = findViewById(R.id.trackLocationMapTv);
 
         eventId = getIntent().getStringExtra("eventId");
+
+        eventLocationTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                OpenMap();
+            }
+        });
+
         editTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,6 +103,8 @@ public class EventDescriptionActivity extends AppCompatActivity {
                 String eventTime = "" + snapshot.child("time").getValue();
                 String eventLocation = "" + snapshot.child("eventLocation").getValue();
                 String eventImage = "" + snapshot.child("eventImage").getValue();
+                latitude = ""+snapshot.child("latitude").getValue();
+                longitude = ""+snapshot.child("longitude").getValue();
 
                 eventNameTv.setText(eventName);
                 eventDescriptionTv.setText(eventDescription);
@@ -113,5 +126,11 @@ public class EventDescriptionActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    private void OpenMap() {
+        String address = "https://maps.google.com/maps?saar=" + latitude + "," + longitude + "&daddr=" + latitude + "," + longitude;
+        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(address));
+        startActivity(intent);
     }
 }
