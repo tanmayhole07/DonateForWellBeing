@@ -11,12 +11,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.donatefoewellbeing.Activities.AddEventActivity;
-import com.example.donatefoewellbeing.Activities.EventDescriptionActivity;
-import com.example.donatefoewellbeing.Activities.OngoingEventsActivity;
+import com.example.donatefoewellbeing.Admin.EventDescriptionActivity;
 import com.example.donatefoewellbeing.Models.ModelOngoingEvent;
 import com.example.donatefoewellbeing.R;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -26,10 +23,12 @@ public class AdapterOngoingEvent extends RecyclerView.Adapter<AdapterOngoingEven
 
     private Context context;
     public ArrayList<ModelOngoingEvent> ongoingEventList;
+    private String eventSection;
 
-    public AdapterOngoingEvent(Context context, ArrayList<ModelOngoingEvent> ongoingEventList) {
+    public AdapterOngoingEvent(Context context, ArrayList<ModelOngoingEvent> ongoingEventList, String eventSection) {
         this.context = context;
         this.ongoingEventList = ongoingEventList;
+        this.eventSection = eventSection;
     }
 
     @NonNull
@@ -68,6 +67,7 @@ public class AdapterOngoingEvent extends RecyclerView.Adapter<AdapterOngoingEven
             public void onClick(View view) {
                 Intent intent = new Intent(context, EventDescriptionActivity.class);
                 intent.putExtra("eventId", eventId);
+                intent.putExtra("eventSection",eventSection);
                 context.startActivity(intent);
             }
         });

@@ -16,30 +16,31 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".Admin.AddRecentEventActivity"></activity>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".Activities.EditEventActivity"></activity>
-        <activity android:name=".Activities.EventDescriptionActivity" />
-        <activity android:name=".Activities.AddEventActivity" />
-        <activity android:name=".Activities.AdminProfileActivity" />
-        <activity android:name=".Activities.RecentEventsActivity" />
-        <activity android:name=".Activities.UpcommingEventsActivity" />
-        <activity android:name=".Activities.OngoingEventsActivity" />
-        <activity android:name=".Activities.SplashActivity">
+        <activity android:name=".Admin.EditEventActivity" />
+        <activity android:name=".Admin.EventDescriptionActivity" />
+        <activity android:name=".Admin.AddEventActivity" />
+        <activity android:name=".Admin.Main.AdminProfileActivity" />
+        <activity android:name=".Admin.Main.RecentEventsActivity" />
+        <activity android:name=".Admin.Main.UpcommingEventsActivity" />
+        <activity android:name=".Admin.Main.OngoingEventsActivity" />
+        <activity android:name=".CommonActivities.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AdminDashboardActivity" />
+        <activity android:name=".Admin.AdminDashboardActivity" />
         <activity
-            android:name=".DashboardUserActivity"
+            android:name=".User.DashboardUserActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".LoginActivity" />
+        <activity android:name=".CommonActivities.LoginActivity" />
     </application>
 
 </manifest>

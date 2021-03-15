@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.AdminProfileActivity">
+    tools:context=".Admin.Main.AdminProfileActivity">
 
     <RelativeLayout
         android:id="@+id/toolbar"
@@ -45,7 +45,7 @@
         android:background="@color/purple_500"
         android:elevation="5dp">
 
-        <com.example.donatefoewellbeing.SlantView
+        <com.example.donatefoewellbeing.CommonActivities.SlantView
             android:id="@+id/slantView"
             android:layout_width="match_parent"
             android:layout_height="350dp" />

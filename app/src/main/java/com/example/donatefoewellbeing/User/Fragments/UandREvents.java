@@ -1,4 +1,4 @@
-package com.example.donatefoewellbeing.Fragments;
+package com.example.donatefoewellbeing.User.Fragments;
 
 import android.os.Bundle;
 

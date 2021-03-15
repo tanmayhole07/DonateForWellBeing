@@ -1,4 +1,4 @@
-package com.example.donatefoewellbeing;
+package com.example.donatefoewellbeing.CommonActivities;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -21,6 +21,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.donatefoewellbeing.Admin.AdminDashboardActivity;
+import com.example.donatefoewellbeing.R;
+import com.example.donatefoewellbeing.User.DashboardUserActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

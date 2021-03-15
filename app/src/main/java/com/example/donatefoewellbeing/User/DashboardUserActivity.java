@@ -1,4 +1,4 @@
-package com.example.donatefoewellbeing;
+package com.example.donatefoewellbeing.User;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -22,11 +22,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.donatefoewellbeing.Fragments.AboutUsFragment;
-import com.example.donatefoewellbeing.Fragments.ContactUsFragment;
-import com.example.donatefoewellbeing.Fragments.OngoingEvents;
-import com.example.donatefoewellbeing.Fragments.UandREvents;
-import com.example.donatefoewellbeing.Fragments.UserAccountkFragment;
+import com.example.donatefoewellbeing.CommonActivities.LoginActivity;
+import com.example.donatefoewellbeing.R;
+import com.example.donatefoewellbeing.User.Fragments.AboutUsFragment;
+import com.example.donatefoewellbeing.User.Fragments.ContactUsFragment;
+import com.example.donatefoewellbeing.User.Fragments.OngoingEvents;
+import com.example.donatefoewellbeing.User.Fragments.UandREvents;
+import com.example.donatefoewellbeing.User.Fragments.UserAccountkFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.navigation.NavigationView;

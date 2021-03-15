@@ -1,9 +1,8 @@
-package com.example.donatefoewellbeing.Activities;
+package com.example.donatefoewellbeing.Admin.Main;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.recyclerview.widget.RecyclerView.Adapter;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,7 +10,7 @@ import android.view.View;
 import android.widget.ImageButton;
 
 import com.example.donatefoewellbeing.Adapters.AdapterOngoingEvent;
-import com.example.donatefoewellbeing.AdminDashboardActivity;
+import com.example.donatefoewellbeing.Admin.AddRecentEventActivity;
 import com.example.donatefoewellbeing.Models.ModelOngoingEvent;
 import com.example.donatefoewellbeing.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -24,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class OngoingEventsActivity extends AppCompatActivity {
+public class RecentEventsActivity extends AppCompatActivity {
 
     private FloatingActionButton addEventFab;
     private ImageButton backBtn;
@@ -33,10 +32,12 @@ public class OngoingEventsActivity extends AppCompatActivity {
     private ArrayList<ModelOngoingEvent> ongoingEventList;
     private AdapterOngoingEvent adapterOngoingEvent;
 
+    String eventSection = "RecentEvents";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_ongoing_events);
+        setContentView(R.layout.activity_recent_events);
 
         addEventFab = findViewById(R.id.addEventFab);
         backBtn = findViewById(R.id.backBtn);
@@ -57,20 +58,20 @@ public class OngoingEventsActivity extends AppCompatActivity {
         addEventFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(OngoingEventsActivity.this, AddEventActivity.class));
+                startActivity(new Intent(RecentEventsActivity.this, AddRecentEventActivity.class));
 
             }
         });
 
-        loadOngoingEvents();
+        loadRecentEvents();
     }
 
-    private void loadOngoingEvents() {
+    private void loadRecentEvents() {
 
         ongoingEventList = new ArrayList<>();
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
-        ref.child("OngoingEvents")
+        ref.child(eventSection)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -79,7 +80,7 @@ public class OngoingEventsActivity extends AppCompatActivity {
                             ModelOngoingEvent modelOngoingEvent = ds.getValue(ModelOngoingEvent.class);
                             ongoingEventList.add(modelOngoingEvent);
                         }
-                        adapterOngoingEvent = new AdapterOngoingEvent(OngoingEventsActivity.this, ongoingEventList);
+                        adapterOngoingEvent = new AdapterOngoingEvent(RecentEventsActivity.this, ongoingEventList, eventSection);
                         eventsRv.setAdapter(adapterOngoingEvent);
 
                     }

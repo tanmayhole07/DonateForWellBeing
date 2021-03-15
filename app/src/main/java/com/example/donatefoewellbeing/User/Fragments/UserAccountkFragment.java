@@ -1,4 +1,4 @@
-package com.example.donatefoewellbeing.Fragments;
+package com.example.donatefoewellbeing.User.Fragments;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -32,7 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.donatefoewellbeing.LoginActivity;
+import com.example.donatefoewellbeing.CommonActivities.LoginActivity;
 import com.example.donatefoewellbeing.R;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -40,7 +40,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;

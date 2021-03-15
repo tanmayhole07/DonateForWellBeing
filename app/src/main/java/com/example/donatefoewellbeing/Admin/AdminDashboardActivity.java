@@ -1,4 +1,4 @@
-package com.example.donatefoewellbeing;
+package com.example.donatefoewellbeing.Admin;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -7,12 +7,12 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
-import com.example.donatefoewellbeing.Activities.AdminProfileActivity;
-import com.example.donatefoewellbeing.Activities.OngoingEventsActivity;
-import com.example.donatefoewellbeing.Activities.RecentEventsActivity;
-import com.example.donatefoewellbeing.Activities.UpcommingEventsActivity;
+import com.example.donatefoewellbeing.Admin.Main.AdminProfileActivity;
+import com.example.donatefoewellbeing.Admin.Main.OngoingEventsActivity;
+import com.example.donatefoewellbeing.Admin.Main.RecentEventsActivity;
+import com.example.donatefoewellbeing.Admin.Main.UpcommingEventsActivity;
+import com.example.donatefoewellbeing.R;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class AdminDashboardActivity extends AppCompatActivity {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.UserAccountkFragment">
+    tools:context=".User.Fragments.UserAccountkFragment">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -51,7 +51,7 @@
 
         </RelativeLayout>
 
-        <com.example.donatefoewellbeing.SlantView
+        <com.example.donatefoewellbeing.CommonActivities.SlantView
             android:id="@+id/slantView"
             android:layout_width="match_parent"
             android:layout_height="50dp"

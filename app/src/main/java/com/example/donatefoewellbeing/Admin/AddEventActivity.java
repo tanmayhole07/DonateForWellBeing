@@ -1,0 +1,653 @@
+package com.example.donatefoewellbeing.Admin;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import android.Manifest;
+import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
+import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TimePicker;
+import android.widget.Toast;
+
+import com.example.donatefoewellbeing.CommonActivities.LoginActivity;
+import com.example.donatefoewellbeing.Models.ModelTask;
+import com.example.donatefoewellbeing.R;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CircleOptions;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Locale;
+
+public class AddEventActivity extends AppCompatActivity implements OnMapReadyCallback {
+
+    private ImageView eventPicIv;
+    private EditText eventNameEt, eventDescriptionEt, eventOrganizationNameEt, dateEt, timeEt, eventLocationEt;
+    private Button addEventBtn;
+    private ImageButton backBtn;
+    private FloatingActionButton step1CompleteFab;
+
+    private ConstraintLayout layout_add_product_1, layout_add_product_2;
+
+    private GoogleMap mMap;
+    PlaceAutocompleteFragment placeAutoComplete;
+
+    //permission constants
+    private static final int CAMERA_REQUEST_CODE = 200;
+    private static final int STORAGE_REQUEST_CODE = 300;
+
+    //image pick constants
+    private static final int IMAGE_PICK_GALLERY_CODE = 400;
+    private static final int IMAGE_PICK_CAMERA_CODE = 500;
+
+    //permission arrays
+    private String[] cameraPermissions;
+    private String[] storagePermissions;
+
+    ModelTask model = new ModelTask();
+    private LatLng ltl = new LatLng(36.7783, 119.4179);
+    private int taskFlag = 0;
+    String Latitude, Longitude;
+    LatLng oldlatLng;
+    Marker oldMarker;
+    Marker newMarkr;
+
+
+    ModelTask passedIntent = new ModelTask();
+
+    private Uri image_uri;
+    private ProgressDialog pd;
+    String mUID = "uid";
+
+    //Firebase Variables
+    FirebaseAuth firebaseAuth;
+    final Calendar myCalendar = Calendar.getInstance();
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_event);
+
+        eventPicIv = findViewById(R.id.eventPicIv);
+        eventNameEt = findViewById(R.id.eventNameEt);
+        eventDescriptionEt = findViewById(R.id.eventDescriptionEt);
+        eventOrganizationNameEt = findViewById(R.id.eventOrganizationNameEt);
+        dateEt = findViewById(R.id.dateEt);
+        timeEt = findViewById(R.id.timeEt);
+        eventLocationEt = findViewById(R.id.eventLocationEt);
+        step1CompleteFab = findViewById(R.id.step1CompleteFab);
+        backBtn = findViewById(R.id.backBtn);
+
+        addEventBtn = findViewById(R.id.addEventBtn);
+        layout_add_product_1 = findViewById(R.id.layout_add_product_1);
+        layout_add_product_2 = findViewById(R.id.layout_add_product_2);
+
+        passedIntent = (ModelTask) getIntent().getSerializableExtra("clickedData");
+        cameraPermissions = new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
+        storagePermissions = new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE};
+
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+
+            @Override
+            public void onDateSet(DatePicker view, int year, int monthOfYear,
+                                  int dayOfMonth) {
+                // TODO Auto-generated method stub
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, monthOfYear);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                updateLabel();
+            }
+        };
+
+        addEventBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                inputData2();
+            }
+        });
+
+        dateEt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                new DatePickerDialog(AddEventActivity.this, date, myCalendar
+                        .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
+                        myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        timeEt.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker;
+                mTimePicker = new TimePickerDialog(AddEventActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        timeEt.setText(selectedHour + ":" + selectedMinute);
+                    }
+                }, hour, minute, true);//Yes 24 hour time
+                mTimePicker.setTitle("Select Time");
+                mTimePicker.show();
+
+            }
+        });
+
+        backBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
+
+        eventPicIv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showImagePicDialog();
+            }
+        });
+
+        step1CompleteFab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                inputData1();
+            }
+        });
+
+        pd = new ProgressDialog(this);
+        pd.setTitle("Please Wait");
+        pd.setCanceledOnTouchOutside(false);
+        firebaseAuth = FirebaseAuth.getInstance();
+
+        if(passedIntent != null){
+             oldlatLng = new LatLng(passedIntent.getLatitude(),passedIntent.getLongitude());
+        }
+
+//        Places.initialize(getApplicationContext(), "AIzaSyDAksT1L6mUK7tjcGIDlym8B9cjh5aucsg");
+//        eventLocationEt.setFocusable(false);
+//        eventLocationEt.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                List<com.google.android.libraries.places.api.model.Place.Field> fieldList = Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ADDRESS,
+//                        com.google.android.libraries.places.api.model.Place.Field.LAT_LNG, com.google.android.libraries.places.api.model.Place.Field.NAME);
+//
+//                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY,
+//                        fieldList).build(AddEventActivity.this);
+//
+//                startActivityForResult(intent, 100);
+//            }
+//        });
+
+//        placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.eventLocationEt);
+//        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//            @Override
+//            public void onPlaceSelected(Place place) {
+//                addMarker(place);
+//                Log.d("Maps", "Place selected: " + place.getName());
+//            }
+//
+//            @Override
+//            public void onError(Status status) {
+//                Log.d("Maps", "An error occurred: " + status);
+//            }
+//        });
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        checkUserStatus();
+
+    }
+
+
+
+    private void updateLabel() {
+        String myFormat = "dd/MM/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        dateEt.setText(sdf.format(myCalendar.getTime()));
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private String eventName, eventDescription, eventOrganizationName, date, time, eventLocation;
+
+    private void inputData1() {
+
+        eventName = eventNameEt.getText().toString().trim();
+        eventDescription = eventDescriptionEt.getText().toString().trim();
+        eventOrganizationName = eventOrganizationNameEt.getText().toString().trim();
+        date = dateEt.getText().toString().trim();
+        time = timeEt.getText().toString().trim();
+
+        if (TextUtils.isEmpty(eventName)) {
+            Toast.makeText(AddEventActivity.this, "Event Name is required...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(eventDescription)) {
+            Toast.makeText(AddEventActivity.this, "Event Name is required...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(eventOrganizationName)) {
+            Toast.makeText(AddEventActivity.this, "Event Organizer Name is required...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(date)) {
+            Toast.makeText(AddEventActivity.this, "Event Date is required...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (TextUtils.isEmpty(time)) {
+            Toast.makeText(AddEventActivity.this, "Event time is required...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+        layout2();
+
+    }
+
+    private void inputData2() {
+        eventLocation = eventLocationEt.getText().toString().trim();
+        if (TextUtils.isEmpty(eventLocation)) {
+            Toast.makeText(AddEventActivity.this, "Event time is required...", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        addEvent();
+    }
+
+    private void layout2() {
+        layout_add_product_2.setVisibility(View.VISIBLE);
+        layout_add_product_1.setVisibility(View.GONE);
+    }
+
+    private void layout1() {
+        layout_add_product_2.setVisibility(View.GONE);
+        layout_add_product_1.setVisibility(View.VISIBLE);
+    }
+
+    private void addEvent() {
+        pd.setMessage("Adding Event");
+        if (image_uri == null) {
+
+            final String timeStamp = "" + System.currentTimeMillis();
+
+            HashMap<String, Object> hashMap = new HashMap<>();
+            hashMap.put("eventName", "" + eventName);
+            hashMap.put("eventDescription", "" + eventDescription);
+            hashMap.put("eventOrganizationName", "" + eventOrganizationName);
+            hashMap.put("date", "" + date);
+            hashMap.put("time", "" + time);
+            hashMap.put("eventLocation", "" + eventLocation);
+            hashMap.put("timeStamp", "" + timeStamp);
+            hashMap.put("latitude", "" + model.getLatitude());
+            hashMap.put("longitude", "" + model.getLongitude());
+
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
+            ref.child("OngoingEvents").child(timeStamp)
+                    .setValue(hashMap)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            pd.dismiss();
+                            Toast.makeText(AddEventActivity.this, "Updated...", Toast.LENGTH_SHORT).show();
+                            onBackPressed();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            pd.dismiss();
+                            Toast.makeText(AddEventActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        } else {
+            final String timeStamp = "" + System.currentTimeMillis();
+
+            String filePathAndName = "event_images/" + "" + timeStamp;
+            StorageReference storageReference = FirebaseStorage.getInstance().getReference(filePathAndName);
+            storageReference.putFile(image_uri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                            while (!uriTask.isSuccessful()) ;
+                            Uri downloadImageUri = uriTask.getResult();
+
+                            if (uriTask.isSuccessful()) {
+                                HashMap<String, Object> hashMap = new HashMap<>();
+                                hashMap.put("eventName", "" + eventName);
+                                hashMap.put("eventImage", "" + downloadImageUri);
+                                hashMap.put("eventDescription", "" + eventDescription);
+                                hashMap.put("eventOrganizationName", "" + eventOrganizationName);
+                                hashMap.put("date", "" + date);
+                                hashMap.put("time", "" + time);
+                                hashMap.put("eventLocation", "" + eventLocation);
+                                hashMap.put("timeStamp", "" + timeStamp);
+                                hashMap.put("latitude", "" + model.getLatitude());
+                                hashMap.put("longitude", "" + model.getLongitude());
+
+                                DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
+                                ref.child("OngoingEvents").child(timeStamp)
+                                        .setValue(hashMap)
+                                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                pd.dismiss();
+                                                Toast.makeText(AddEventActivity.this, "Updated...", Toast.LENGTH_SHORT).show();
+                                                onBackPressed();
+                                            }
+                                        })
+                                        .addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                pd.dismiss();
+                                                Toast.makeText(AddEventActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+
+        }
+
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Camera & Storage permissions, requests and setting Data//
+
+    private void showImagePicDialog() {
+
+        String[] options = {"Camera", "Gallery"};
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Pick Image")
+                .setItems(options, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        if (i == 0) {
+                            //camera clicked
+                            if (checkCameraPermission()) {
+                                pickFromCamera();
+                            } else {
+                                requestCameraPermission();
+                            }
+                        } else {
+                            //gallery clicked
+                            if (checkStoragePermission()) {
+                                pickFromGallery();
+                            } else {
+                                requestStoragePermission();
+                            }
+                        }
+                    }
+                }).show();
+
+    }
+
+    private void pickFromCamera() {
+        ContentValues cv = new ContentValues();
+        cv.put(MediaStore.Images.Media.TITLE, "Temp_Image Title");
+        cv.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image Description");
+
+        image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
+        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
+    }
+
+    private void pickFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType("image/*");
+        startActivityForResult(intent, IMAGE_PICK_GALLERY_CODE);
+    }
+
+    private boolean checkStoragePermission() {
+        boolean result = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == (PackageManager.PERMISSION_GRANTED);
+        return result;
+    }
+
+    private void requestStoragePermission() {
+        ActivityCompat.requestPermissions(this, storagePermissions, STORAGE_REQUEST_CODE);
+    }
+
+    private boolean checkCameraPermission() {
+        boolean result = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
+
+        boolean result1 = ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA) == (PackageManager.PERMISSION_GRANTED);
+        return result && result1;
+    }
+
+    private void requestCameraPermission() {
+        ActivityCompat.requestPermissions(this, cameraPermissions, CAMERA_REQUEST_CODE);
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //Permission request and Activity result//
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode) {
+
+            case CAMERA_REQUEST_CODE: {
+                if (grantResults.length > 0) {
+                    boolean cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean storageAccepted = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    if (cameraAccepted && storageAccepted) {
+                        pickFromCamera();
+                    } else {
+                        Toast.makeText(this, "Camera permission is required...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+            break;
+
+            case STORAGE_REQUEST_CODE: {
+                if (grantResults.length > 0) {
+                    boolean storageAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    if (storageAccepted) {
+                        pickFromGallery();
+                    } else {
+                        Toast.makeText(this, "Storage permission is required...", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+            break;
+
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+
+        if (resultCode == RESULT_OK) {
+            if (requestCode == IMAGE_PICK_GALLERY_CODE) {
+                image_uri = data.getData();
+                eventPicIv.setImageURI(image_uri);
+            } else if (requestCode == IMAGE_PICK_CAMERA_CODE) {
+                eventPicIv.setImageURI(image_uri);
+            }
+        }
+
+//        if (resultCode == 100 && resultCode == RESULT_OK) {
+//            com.google.android.libraries.places.api.model.Place place = Autocomplete.getPlaceFromIntent(data);
+//            eventLocationEt.setText(place.getAddress());
+//            Toast.makeText(this, "Latitude and Longitude = " + place.getLatLng(), Toast.LENGTH_SHORT).show();
+//        } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+//            Status status = Autocomplete.getStatusFromIntent(data);
+//            Toast.makeText(getApplicationContext(), "" + status, Toast.LENGTH_SHORT).show();
+//
+//        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private void checkUserStatus() {
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user != null) {
+            mUID = user.getUid();
+            layout1();
+
+        } else {
+            startActivity(new Intent(AddEventActivity.this, LoginActivity.class));
+            finish();
+        }
+    }
+
+    public Location getLocation() {
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager != null) {
+
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            }
+            Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if(currentLocation != null)
+                return currentLocation;
+            else{
+                currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                return currentLocation;
+            }
+        }
+        else{
+            // ask the user to turn on the GPS
+            return null;
+        }
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        taskFlag = 0;
+        // showing the current location
+        final Location location = getLocation();
+        LatLng currentLoc = new LatLng(location.getLatitude(),location.getLongitude());
+        if(passedIntent != null){
+
+            oldMarker = mMap.addMarker(new MarkerOptions().position(oldlatLng).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(oldlatLng,15));
+        }else{
+            newMarkr = mMap.addMarker(new MarkerOptions().position(currentLoc).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,15));
+
+        }
+
+        mMap.animateCamera(CameraUpdateFactory.zoomIn());
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+
+
+
+        // https://stackoverflow.com/questions/24302112/how-to-get-the-latitude-and-longitude-of-location-where-user-taps-on-the-map-in
+        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+            @Override
+            public void onMapLongClick(LatLng latLng) {
+                // remove marker when new one added
+                if(taskFlag == 0) {
+                    taskFlag = 1;
+                    if(passedIntent != null){
+                        oldMarker.remove();
+                    }
+                    mMap.addMarker(new MarkerOptions().position(latLng).title("Custom location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                    CircleOptions circleOptions = new CircleOptions()
+                            .center(latLng)
+                            .radius(100)
+                            .fillColor(0x40ff0000)  //semi-transparent
+                            .strokeColor(Color.RED)
+                            .strokeWidth(5);
+                    mMap.addCircle(circleOptions);
+                    ltl = latLng;
+                    if(passedIntent != null){
+                        passedIntent.setLatitude(ltl.latitude);
+                        passedIntent.setLongitude(ltl.longitude);
+                    }else{
+                        model.setLatitude(ltl.latitude);
+                        model.setLongitude(ltl.longitude);
+                    }
+                }
+            }
+        });
+        
+    }
+
+//    public void addMarker(Place p) {
+//
+//        MarkerOptions markerOptions = new MarkerOptions();
+//
+//        markerOptions.position(p.getLatLng());
+//        markerOptions.title(p.getName() + "");
+//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+//
+//        mMap.addMarker(markerOptions);
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
+//        mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
+//    }
+}

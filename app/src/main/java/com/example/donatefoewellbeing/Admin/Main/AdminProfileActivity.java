@@ -1,4 +1,4 @@
-package com.example.donatefoewellbeing.Activities;
+package com.example.donatefoewellbeing.Admin.Main;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,9 +27,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.donatefoewellbeing.LoginActivity;
+import com.example.donatefoewellbeing.CommonActivities.LoginActivity;
 import com.example.donatefoewellbeing.R;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;

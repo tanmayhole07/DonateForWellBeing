@@ -1,4 +1,4 @@
-package com.example.donatefoewellbeing.Activities;
+package com.example.donatefoewellbeing.CommonActivities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,9 +9,8 @@ import android.view.WindowManager;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.donatefoewellbeing.AdminDashboardActivity;
-import com.example.donatefoewellbeing.DashboardUserActivity;
-import com.example.donatefoewellbeing.LoginActivity;
+import com.example.donatefoewellbeing.Admin.AdminDashboardActivity;
+import com.example.donatefoewellbeing.User.DashboardUserActivity;
 import com.example.donatefoewellbeing.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;

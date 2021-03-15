@@ -1,4 +1,4 @@
-package com.example.donatefoewellbeing.Activities;
+package com.example.donatefoewellbeing.Admin;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -33,8 +33,8 @@ import android.widget.ImageView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.donatefoewellbeing.LoginActivity;
-import com.example.donatefoewellbeing.ModelTask;
+import com.example.donatefoewellbeing.CommonActivities.LoginActivity;
+import com.example.donatefoewellbeing.Models.ModelTask;
 import com.example.donatefoewellbeing.R;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -63,7 +63,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class AddEventActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class AddRecentEventActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private ImageView eventPicIv;
     private EditText eventNameEt, eventDescriptionEt, eventOrganizationNameEt, dateEt, timeEt, eventLocationEt;
@@ -110,7 +110,7 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_event);
+        setContentView(R.layout.activity_add_recent_event);
 
         eventPicIv = findViewById(R.id.eventPicIv);
         eventNameEt = findViewById(R.id.eventNameEt);
@@ -155,7 +155,7 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                new DatePickerDialog(AddEventActivity.this, date, myCalendar
+                new DatePickerDialog(AddRecentEventActivity.this, date, myCalendar
                         .get(Calendar.YEAR), myCalendar.get(Calendar.MONTH),
                         myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
@@ -170,7 +170,7 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
                 int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
                 int minute = mcurrentTime.get(Calendar.MINUTE);
                 TimePickerDialog mTimePicker;
-                mTimePicker = new TimePickerDialog(AddEventActivity.this, new TimePickerDialog.OnTimeSetListener() {
+                mTimePicker = new TimePickerDialog(AddRecentEventActivity.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         timeEt.setText(selectedHour + ":" + selectedMinute);
@@ -209,47 +209,15 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
         firebaseAuth = FirebaseAuth.getInstance();
 
         if(passedIntent != null){
-             oldlatLng = new LatLng(passedIntent.getLatitude(),passedIntent.getLongitude());
+            oldlatLng = new LatLng(passedIntent.getLatitude(),passedIntent.getLongitude());
         }
-
-//        Places.initialize(getApplicationContext(), "AIzaSyDAksT1L6mUK7tjcGIDlym8B9cjh5aucsg");
-//        eventLocationEt.setFocusable(false);
-//        eventLocationEt.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                List<com.google.android.libraries.places.api.model.Place.Field> fieldList = Arrays.asList(com.google.android.libraries.places.api.model.Place.Field.ADDRESS,
-//                        com.google.android.libraries.places.api.model.Place.Field.LAT_LNG, com.google.android.libraries.places.api.model.Place.Field.NAME);
-//
-//                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY,
-//                        fieldList).build(AddEventActivity.this);
-//
-//                startActivityForResult(intent, 100);
-//            }
-//        });
-
-//        placeAutoComplete = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.eventLocationEt);
-//        placeAutoComplete.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-//            @Override
-//            public void onPlaceSelected(Place place) {
-//                addMarker(place);
-//                Log.d("Maps", "Place selected: " + place.getName());
-//            }
-//
-//            @Override
-//            public void onError(Status status) {
-//                Log.d("Maps", "An error occurred: " + status);
-//            }
-//        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
         checkUserStatus();
-
     }
-
-
 
     private void updateLabel() {
         String myFormat = "dd/MM/yy"; //In which you need put here
@@ -271,27 +239,27 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
         time = timeEt.getText().toString().trim();
 
         if (TextUtils.isEmpty(eventName)) {
-            Toast.makeText(AddEventActivity.this, "Event Name is required...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddRecentEventActivity.this, "Event Name is required...", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (TextUtils.isEmpty(eventDescription)) {
-            Toast.makeText(AddEventActivity.this, "Event Name is required...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddRecentEventActivity.this, "Event Name is required...", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (TextUtils.isEmpty(eventOrganizationName)) {
-            Toast.makeText(AddEventActivity.this, "Event Organizer Name is required...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddRecentEventActivity.this, "Event Organizer Name is required...", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (TextUtils.isEmpty(date)) {
-            Toast.makeText(AddEventActivity.this, "Event Date is required...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddRecentEventActivity.this, "Event Date is required...", Toast.LENGTH_SHORT).show();
             return;
         }
 
         if (TextUtils.isEmpty(time)) {
-            Toast.makeText(AddEventActivity.this, "Event time is required...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddRecentEventActivity.this, "Event time is required...", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -303,7 +271,7 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
     private void inputData2() {
         eventLocation = eventLocationEt.getText().toString().trim();
         if (TextUtils.isEmpty(eventLocation)) {
-            Toast.makeText(AddEventActivity.this, "Event time is required...", Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddRecentEventActivity.this, "Event time is required...", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -338,13 +306,13 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
             hashMap.put("longitude", "" + model.getLongitude());
 
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
-            ref.child("OngoingEvents").child(timeStamp)
+            ref.child("RecentEvents").child(timeStamp)
                     .setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {
                             pd.dismiss();
-                            Toast.makeText(AddEventActivity.this, "Updated...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddRecentEventActivity.this, "Updated...", Toast.LENGTH_SHORT).show();
                             onBackPressed();
                         }
                     })
@@ -352,7 +320,7 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             pd.dismiss();
-                            Toast.makeText(AddEventActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(AddRecentEventActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
         } else {
@@ -382,13 +350,13 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
                                 hashMap.put("longitude", "" + model.getLongitude());
 
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
-                                ref.child("OngoingEvents").child(timeStamp)
+                                ref.child("RecentEvents").child(timeStamp)
                                         .setValue(hashMap)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void aVoid) {
                                                 pd.dismiss();
-                                                Toast.makeText(AddEventActivity.this, "Updated...", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(AddRecentEventActivity.this, "Updated...", Toast.LENGTH_SHORT).show();
                                                 onBackPressed();
                                             }
                                         })
@@ -396,7 +364,7 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
                                                 pd.dismiss();
-                                                Toast.makeText(AddEventActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(AddRecentEventActivity.this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         });
                             }
@@ -556,7 +524,7 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
             layout1();
 
         } else {
-            startActivity(new Intent(AddEventActivity.this, LoginActivity.class));
+            startActivity(new Intent(AddRecentEventActivity.this, LoginActivity.class));
             finish();
         }
     }
@@ -635,19 +603,7 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
                 }
             }
         });
-        
+
     }
 
-//    public void addMarker(Place p) {
-//
-//        MarkerOptions markerOptions = new MarkerOptions();
-//
-//        markerOptions.position(p.getLatLng());
-//        markerOptions.title(p.getName() + "");
-//        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-//
-//        mMap.addMarker(markerOptions);
-//        mMap.moveCamera(CameraUpdateFactory.newLatLng(p.getLatLng()));
-//        mMap.animateCamera(CameraUpdateFactory.zoomTo(13));
-//    }
 }

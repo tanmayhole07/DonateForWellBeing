@@ -1,4 +1,4 @@
-package com.example.donatefoewellbeing;
+package com.example.donatefoewellbeing.CommonActivities;
 
 import android.content.Context;
 import android.graphics.Canvas;

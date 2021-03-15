@@ -1,4 +1,4 @@
-package com.example.donatefoewellbeing;
+package com.example.donatefoewellbeing.Models;
 
 import java.io.Serializable;
 

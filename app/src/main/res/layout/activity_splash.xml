@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/user_account_bg"
-    tools:context=".Activities.SplashActivity">
+    tools:context=".CommonActivities.SplashActivity">
 
     <TextView
         android:layout_width="match_parent"

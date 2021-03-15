@@ -1,4 +1,4 @@
-package com.example.donatefoewellbeing.Activities;
+package com.example.donatefoewellbeing.Admin;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -24,7 +24,7 @@ public class EventDescriptionActivity extends AppCompatActivity {
     private ImageView eventIv, trackLocationMapTv;
     private TextView editTv, deleteTv, eventNameTv, eventDescriptionTv, eventDateTv, eventTimeTv, eventLocationTv, eventOrganizationNameTv;
 
-    private String eventId, latitude, longitude;
+    private String eventId, eventSection, latitude, longitude;
 
 
     @Override
@@ -44,6 +44,7 @@ public class EventDescriptionActivity extends AppCompatActivity {
 //        trackLocationMapTv = findViewById(R.id.trackLocationMapTv);
 
         eventId = getIntent().getStringExtra("eventId");
+        eventSection = getIntent().getStringExtra("eventSection");
 
         eventLocationTv.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,6 +58,7 @@ public class EventDescriptionActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(EventDescriptionActivity.this, EditEventActivity.class);
                 intent.putExtra("eventId", eventId);
+                intent.putExtra("eventSection",eventSection);
                 startActivity(intent);
             }
         });
@@ -72,7 +74,7 @@ public class EventDescriptionActivity extends AppCompatActivity {
 
     private void deleteEvent() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
-        ref.child("OngoingEvents").orderByChild("timeStamp").equalTo(eventId)
+        ref.child(eventSection).orderByChild("timeStamp").equalTo(eventId)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -92,7 +94,7 @@ public class EventDescriptionActivity extends AppCompatActivity {
 
     private void loadEventDescription() {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
-        ref.child("OngoingEvents").child(eventId).addValueEventListener(new ValueEventListener() {
+        ref.child(eventSection).child(eventId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
 
