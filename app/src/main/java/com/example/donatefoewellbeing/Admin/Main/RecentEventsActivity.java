@@ -8,8 +8,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.donatefoewellbeing.Adapters.AdapterOngoingEvent;
+import com.example.donatefoewellbeing.Admin.AddEventActivity;
 import com.example.donatefoewellbeing.Admin.AddRecentEventActivity;
 import com.example.donatefoewellbeing.Models.ModelOngoingEvent;
 import com.example.donatefoewellbeing.R;
@@ -28,6 +30,7 @@ public class RecentEventsActivity extends AppCompatActivity {
     private FloatingActionButton addEventFab;
     private ImageButton backBtn;
     private RecyclerView eventsRv;
+    private TextView toolbarText;
 
     private ArrayList<ModelOngoingEvent> ongoingEventList;
     private AdapterOngoingEvent adapterOngoingEvent;
@@ -42,10 +45,26 @@ public class RecentEventsActivity extends AppCompatActivity {
         addEventFab = findViewById(R.id.addEventFab);
         backBtn = findViewById(R.id.backBtn);
         eventsRv = findViewById(R.id.eventsRv);
+        toolbarText = findViewById(R.id.toolbarText);
 
         //firebase Variables
         FirebaseAuth firebaseAuth;
         firebaseAuth = FirebaseAuth.getInstance();
+
+        toolbarText.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                if (addEventFab.getVisibility() == View.GONE) {
+                    addEventFab.setVisibility(View.VISIBLE);
+                } else {
+                    addEventFab.setVisibility(View.GONE);
+                }
+
+                return true;
+            }
+        });
+
+        addEventFab.setVisibility(View.GONE);
 
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -58,7 +77,10 @@ public class RecentEventsActivity extends AppCompatActivity {
         addEventFab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(RecentEventsActivity.this, AddRecentEventActivity.class));
+                startActivity(new Intent(RecentEventsActivity.this, AddEventActivity.class));
+                Intent intent = new Intent(RecentEventsActivity.this, AddEventActivity.class);
+                intent.putExtra("eventSection", eventSection);
+                startActivity(intent);
 
             }
         });
@@ -76,7 +98,7 @@ public class RecentEventsActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         ongoingEventList.clear();
-                        for (DataSnapshot ds : snapshot.getChildren()){
+                        for (DataSnapshot ds : snapshot.getChildren()) {
                             ModelOngoingEvent modelOngoingEvent = ds.getValue(ModelOngoingEvent.class);
                             ongoingEventList.add(modelOngoingEvent);
                         }

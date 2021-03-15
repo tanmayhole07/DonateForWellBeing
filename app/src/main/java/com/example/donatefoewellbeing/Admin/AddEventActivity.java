@@ -91,7 +91,7 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
     ModelTask model = new ModelTask();
     private LatLng ltl = new LatLng(36.7783, 119.4179);
     private int taskFlag = 0;
-    String Latitude, Longitude;
+    String Latitude, Longitude, eventSection;
     LatLng oldlatLng;
     Marker oldMarker;
     Marker newMarkr;
@@ -121,6 +121,7 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
         eventLocationEt = findViewById(R.id.eventLocationEt);
         step1CompleteFab = findViewById(R.id.step1CompleteFab);
         backBtn = findViewById(R.id.backBtn);
+        eventSection = getIntent().getStringExtra("eventSection");
 
         addEventBtn = findViewById(R.id.addEventBtn);
         layout_add_product_1 = findViewById(R.id.layout_add_product_1);
@@ -338,7 +339,7 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
             hashMap.put("longitude", "" + model.getLongitude());
 
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
-            ref.child("OngoingEvents").child(timeStamp)
+            ref.child(eventSection).child(timeStamp)
                     .setValue(hashMap)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
@@ -382,7 +383,7 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
                                 hashMap.put("longitude", "" + model.getLongitude());
 
                                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Events");
-                                ref.child("OngoingEvents").child(timeStamp)
+                                ref.child(eventSection).child(timeStamp)
                                         .setValue(hashMap)
                                         .addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override

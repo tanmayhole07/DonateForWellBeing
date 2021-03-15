@@ -11,6 +11,8 @@ import android.widget.ImageButton;
 
 import com.example.donatefoewellbeing.Adapters.AdapterOngoingEvent;
 import com.example.donatefoewellbeing.Admin.AddEventActivity;
+import com.example.donatefoewellbeing.Admin.EditEventActivity;
+import com.example.donatefoewellbeing.Admin.EventDescriptionActivity;
 import com.example.donatefoewellbeing.Models.ModelOngoingEvent;
 import com.example.donatefoewellbeing.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -59,6 +61,9 @@ public class OngoingEventsActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(OngoingEventsActivity.this, AddEventActivity.class));
+                Intent intent = new Intent(OngoingEventsActivity.this, AddEventActivity.class);
+                intent.putExtra("eventSection",eventSection);
+                startActivity(intent);
 
             }
         });
