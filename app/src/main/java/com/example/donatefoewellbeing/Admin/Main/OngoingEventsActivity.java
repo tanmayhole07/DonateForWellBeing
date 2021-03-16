@@ -9,10 +9,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.example.donatefoewellbeing.Adapters.AdapterOngoingEvent;
+import com.example.donatefoewellbeing.Adapters.AdapterEvent;
 import com.example.donatefoewellbeing.Admin.AddEventActivity;
-import com.example.donatefoewellbeing.Admin.EditEventActivity;
-import com.example.donatefoewellbeing.Admin.EventDescriptionActivity;
 import com.example.donatefoewellbeing.Models.ModelOngoingEvent;
 import com.example.donatefoewellbeing.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -32,7 +30,7 @@ public class OngoingEventsActivity extends AppCompatActivity {
     private RecyclerView eventsRv;
 
     private ArrayList<ModelOngoingEvent> ongoingEventList;
-    private AdapterOngoingEvent adapterOngoingEvent;
+    private AdapterEvent adapterEvent;
 
     String eventSection = "OngoingEvents";
 
@@ -85,8 +83,8 @@ public class OngoingEventsActivity extends AppCompatActivity {
                             ModelOngoingEvent modelOngoingEvent = ds.getValue(ModelOngoingEvent.class);
                             ongoingEventList.add(modelOngoingEvent);
                         }
-                        adapterOngoingEvent = new AdapterOngoingEvent(OngoingEventsActivity.this, ongoingEventList, eventSection);
-                        eventsRv.setAdapter(adapterOngoingEvent);
+                        adapterEvent = new AdapterEvent(OngoingEventsActivity.this, ongoingEventList, eventSection);
+                        eventsRv.setAdapter(adapterEvent);
 
                     }
 

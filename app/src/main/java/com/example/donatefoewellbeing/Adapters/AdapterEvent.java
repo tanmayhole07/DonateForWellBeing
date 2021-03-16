@@ -18,14 +18,14 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class AdapterOngoingEvent extends RecyclerView.Adapter<AdapterOngoingEvent.HolderOngoingEvent> {
+public class AdapterEvent extends RecyclerView.Adapter<AdapterEvent.HolderOngoingEvent> {
 
 
     private Context context;
     public ArrayList<ModelOngoingEvent> ongoingEventList;
     private String eventSection;
 
-    public AdapterOngoingEvent(Context context, ArrayList<ModelOngoingEvent> ongoingEventList, String eventSection) {
+    public AdapterEvent(Context context, ArrayList<ModelOngoingEvent> ongoingEventList, String eventSection) {
         this.context = context;
         this.ongoingEventList = ongoingEventList;
         this.eventSection = eventSection;

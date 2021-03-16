@@ -10,9 +10,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.donatefoewellbeing.Adapters.AdapterOngoingEvent;
+import com.example.donatefoewellbeing.Adapters.AdapterEvent;
 import com.example.donatefoewellbeing.Admin.AddEventActivity;
-import com.example.donatefoewellbeing.Admin.AddRecentEventActivity;
 import com.example.donatefoewellbeing.Models.ModelOngoingEvent;
 import com.example.donatefoewellbeing.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,7 +32,7 @@ public class RecentEventsActivity extends AppCompatActivity {
     private TextView toolbarText;
 
     private ArrayList<ModelOngoingEvent> ongoingEventList;
-    private AdapterOngoingEvent adapterOngoingEvent;
+    private AdapterEvent adapterEvent;
 
     String eventSection = "RecentEvents";
 
@@ -102,8 +101,8 @@ public class RecentEventsActivity extends AppCompatActivity {
                             ModelOngoingEvent modelOngoingEvent = ds.getValue(ModelOngoingEvent.class);
                             ongoingEventList.add(modelOngoingEvent);
                         }
-                        adapterOngoingEvent = new AdapterOngoingEvent(RecentEventsActivity.this, ongoingEventList, eventSection);
-                        eventsRv.setAdapter(adapterOngoingEvent);
+                        adapterEvent = new AdapterEvent(RecentEventsActivity.this, ongoingEventList, eventSection);
+                        eventsRv.setAdapter(adapterEvent);
 
                     }
 

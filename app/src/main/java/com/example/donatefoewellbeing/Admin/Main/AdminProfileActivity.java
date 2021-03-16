@@ -477,7 +477,7 @@ public class AdminProfileActivity extends AppCompatActivity {
                             phoneTv.setText(phone);
 
                             try {
-                                Picasso.get().load(profileImage).placeholder(R.drawable.logo1).into(profileIv);
+                                Picasso.get().load(profileImage).placeholder(R.drawable.ic_person_white).into(profileIv);
                             } catch (Exception e) {
                                 profileIv.setImageResource(R.drawable.logo1);
                             }
