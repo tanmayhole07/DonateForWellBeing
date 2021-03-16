@@ -12,12 +12,18 @@
         <item
             android:id="@+id/ongoingEvent"
             android:icon="@drawable/ic_ongoing_event"
-            android:title="Enevts" />
+            android:title="Events" />
 
         <item
-            android:id="@+id/recentAndUpcommingEvents"
+            android:id="@+id/upcommingEvents"
             android:icon="@drawable/ic_upcomming_recent_event_white"
-            android:title="Recent/Upcomming Events" />
+            android:title="Upcoming Events" />
+
+        <item
+            android:id="@+id/pastEvents"
+            android:icon="@drawable/ic_upcomming_recent_event_white"
+            android:title="Past Events" />
+
         <item
             android:id="@+id/aboutUs"
             android:icon="@drawable/ic_about_us_white"

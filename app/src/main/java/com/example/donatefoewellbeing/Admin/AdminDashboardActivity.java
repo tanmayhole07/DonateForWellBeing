@@ -59,7 +59,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 firebaseAuth.signOut();
-                finish();
+                startActivity(new Intent(AdminDashboardActivity.this, LoginActivity.class));
             }
         });
 
@@ -114,7 +114,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
 //                            phoneTv.setText(phone);
 
                             try {
-                                Picasso.get().load(profileImage).placeholder(R.drawable.ic_person_white).into(profileIv);
+                                Picasso.get().load(profileImage).placeholder(R.drawable.admin_profile_bg).into(profileIv);
                             } catch (Exception e) {
                                 profileIv.setImageResource(R.drawable.logo1);
                             }
@@ -125,6 +125,18 @@ public class AdminDashboardActivity extends AppCompatActivity {
                     public void onCancelled(@NonNull DatabaseError error) {
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        checkUserStatus();
+        super.onResume();
+    }
+
+    @Override
+    protected void onStart() {
+        checkUserStatus();
+        super.onStart();
     }
 
     private void checkUserStatus() {

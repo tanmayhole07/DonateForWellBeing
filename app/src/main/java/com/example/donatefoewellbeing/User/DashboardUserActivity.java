@@ -27,7 +27,8 @@ import com.example.donatefoewellbeing.R;
 import com.example.donatefoewellbeing.User.Fragments.AboutUsFragment;
 import com.example.donatefoewellbeing.User.Fragments.ContactUsFragment;
 import com.example.donatefoewellbeing.User.Fragments.OngoingEvents;
-import com.example.donatefoewellbeing.User.Fragments.UandREvents;
+import com.example.donatefoewellbeing.User.Fragments.PastEventsFragment;
+import com.example.donatefoewellbeing.User.Fragments.UpcomingEventsFragment;
 import com.example.donatefoewellbeing.User.Fragments.UserAccountkFragment;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -81,9 +82,9 @@ public class DashboardUserActivity extends AppCompatActivity {
             drawer.addDrawerListener(toggle);
             toggle.syncState();
 
-        }catch (Exception e){
+        } catch (Exception e) {
 
-            Toast.makeText(this, ""+ e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "" + e.getMessage(), Toast.LENGTH_SHORT).show();
 //            Intent intent = getIntent();
 //            finish();
 //            startActivity(intent);
@@ -106,8 +107,14 @@ public class DashboardUserActivity extends AppCompatActivity {
                         fragment = new OngoingEvents();
                         loadFragment(fragment);
                         break;
-                    case R.id.recentAndUpcommingEvents:
-                        fragment = new UandREvents();
+
+                    case R.id.upcommingEvents:
+                        fragment = new UpcomingEventsFragment();
+                        loadFragment(fragment);
+                        break;
+
+                    case R.id.pastEvents:
+                        fragment = new PastEventsFragment();
                         loadFragment(fragment);
                         break;
                     case R.id.aboutUs:

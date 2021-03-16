@@ -75,7 +75,7 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginBottom="20dp"
+
             android:layout_below="@+id/adminInfoRl">
 
             <androidx.gridlayout.widget.GridLayout
@@ -83,7 +83,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 app:alignmentMode="alignMargins"
-
+                android:layout_marginBottom="50dp"
                 app:columnCount="1"
                 app:columnOrderPreserved="true"
                 app:rowCount="3">

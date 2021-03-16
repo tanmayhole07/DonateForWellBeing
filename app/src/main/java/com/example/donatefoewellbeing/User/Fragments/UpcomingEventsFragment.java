@@ -11,10 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.donatefoewellbeing.Adapters.AdapterEvent;
-import com.example.donatefoewellbeing.Admin.Main.OngoingEventsActivity;
+import com.example.donatefoewellbeing.Admin.Main.UpcommingEventsActivity;
 import com.example.donatefoewellbeing.Models.ModelOngoingEvent;
 import com.example.donatefoewellbeing.R;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,10 +24,10 @@ import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link OngoingEvents#newInstance} factory method to
+ * Use the {@link UpcomingEventsFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class OngoingEvents extends Fragment {
+public class UpcomingEventsFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -39,7 +38,7 @@ public class OngoingEvents extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public OngoingEvents() {
+    public UpcomingEventsFragment() {
         // Required empty public constructor
     }
 
@@ -49,11 +48,11 @@ public class OngoingEvents extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment OngoingEvents.
+     * @return A new instance of fragment RandSEvents.
      */
     // TODO: Rename and change types and number of parameters
-    public static OngoingEvents newInstance(String param1, String param2) {
-        OngoingEvents fragment = new OngoingEvents();
+    public static UpcomingEventsFragment newInstance(String param1, String param2) {
+        UpcomingEventsFragment fragment = new UpcomingEventsFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -69,32 +68,29 @@ public class OngoingEvents extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
     private RecyclerView eventsRv;
 
     private ArrayList<ModelOngoingEvent> ongoingEventList;
     private AdapterEvent adapterEvent;
 
-    String eventSection = "OngoingEvents";
+    String eventSection = "UpComingEvents";
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_ongoing_events, container, false);
+        View view = inflater.inflate(R.layout.fragment_upcoming_events, container, false);
 
         eventsRv = view.findViewById(R.id.eventsRv);
 
-        //firebase Variables
-        FirebaseAuth firebaseAuth;
-        firebaseAuth = FirebaseAuth.getInstance();
+        loadUpComingEvents();
 
-        loadOngoingEvents();
+
         return view;
     }
 
-
-    private void loadOngoingEvents() {
+    private void loadUpComingEvents() {
 
         ongoingEventList = new ArrayList<>();
 
