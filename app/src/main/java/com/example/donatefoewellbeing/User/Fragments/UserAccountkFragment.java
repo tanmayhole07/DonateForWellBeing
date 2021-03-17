@@ -53,6 +53,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -126,7 +128,7 @@ public class UserAccountkFragment extends Fragment {
     TextView nameTv, emailTv, phoneTv, gpsTv, genderTv;
     TextView editUserInfoFab;
 
-    private Uri image_uri;
+    private Uri image_uri_camera, image_uri_gallery;
 
     //permission constants
     private static final int CAMERA_REQUEST_CODE = 100;
@@ -147,7 +149,7 @@ public class UserAccountkFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_user_accountk, container, false);
 
         pd = new ProgressDialog(getActivity());
-        pd.setTitle("Please Title");
+        pd.setTitle("Please wait");
         pd.setCanceledOnTouchOutside(false);
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
@@ -191,7 +193,6 @@ public class UserAccountkFragment extends Fragment {
 
         return view;
     }
-
 
 
     private void showEditProfileDialog() {
@@ -252,15 +253,23 @@ public class UserAccountkFragment extends Fragment {
     }
 
     private void pickFromCamera() {
-        ContentValues cv = new ContentValues();
-        cv.put(MediaStore.Images.Media.TITLE, "Temp_Image Title");
-        cv.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image Description");
+//        ContentValues cv = new ContentValues();
+//        cv.put(MediaStore.Images.Media.TITLE, "Temp_Image Title");
+//        cv.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image Description");
+//
+//        image_uri_camera = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
+//
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri_camera);
+//        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
 
-        image_uri = getActivity().getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
+        CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+                .setCropShape(CropImageView.CropShape.OVAL)
+                .setActivityTitle("Crop Image")
+                .setFixAspectRatio(true)
+                .setCropMenuCropButtonTitle("Done")
+                .start(getContext(), this);
     }
 
     private void pickFromGallery() {
@@ -334,14 +343,51 @@ public class UserAccountkFragment extends Fragment {
 
         if (resultCode == RESULT_OK) {
             if (requestCode == IMAGE_PICK_GALLERY_CODE) {
-                image_uri = data.getData();
+                //image_uri = data.getData();
                 //profileIv.setImageURI(image_uri);
-                uploadProfileCoverPhoto(image_uri);
-            } else if (requestCode == IMAGE_PICK_CAMERA_CODE) {
-                //profileIv.setImageURI(image_uri);
-                uploadProfileCoverPhoto(image_uri);
+                //uploadProfileCoverPhoto(image_uri);
+
+                image_uri_gallery = data.getData();
+                CropImage.activity(image_uri_gallery)
+                        .setGuidelines(CropImageView.Guidelines.ON)
+                        .setCropShape(CropImageView.CropShape.OVAL)
+                        .setActivityTitle("Crop Image")
+                        .setFixAspectRatio(true)
+                        .setCropMenuCropButtonTitle("Done")
+                        .start(getContext(), this);
+
+            }
+//            else if (requestCode == IMAGE_PICK_CAMERA_CODE) {
+//                //profileIv.setImageURI(image_uri);
+//                uploadProfileCoverPhoto(image_uri_camera);
+//            }
+
+        }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK){
+                image_uri_camera = result.getUri();
+                uploadProfileCoverPhoto(image_uri_camera);
+            }else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
+                Exception e = result.getError();
+                Toast.makeText(getActivity(), ""+e, Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                uploadProfileCoverPhoto(resultUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                Toast.makeText(getActivity(), "" + error, Toast.LENGTH_SHORT).show();
             }
         }
+
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -539,7 +585,7 @@ public class UserAccountkFragment extends Fragment {
 
     private double latitude;
     private double longitude;
-    private String userAddress, country,  city, postalCode;
+    private String userAddress, country, city, postalCode;
 
     private void getLocationUser() {
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -573,12 +619,12 @@ public class UserAccountkFragment extends Fragment {
                         userAddress = addresses.get(0).getAddressLine(0);
 
                         HashMap<String, Object> result = new HashMap<>();
-                        result.put("address", ""+userAddress);
-                        result.put("latitude", ""+latitude);
-                        result.put("longitude",""+ longitude);
-                        result.put("city", ""+city);
-                        result.put("postalCode", ""+postalCode);
-                        result.put("country", ""+country);
+                        result.put("address", "" + userAddress);
+                        result.put("latitude", "" + latitude);
+                        result.put("longitude", "" + longitude);
+                        result.put("city", "" + city);
+                        result.put("postalCode", "" + postalCode);
+                        result.put("country", "" + country);
 
                         databaseReference.child(user.getUid()).updateChildren(result)
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {

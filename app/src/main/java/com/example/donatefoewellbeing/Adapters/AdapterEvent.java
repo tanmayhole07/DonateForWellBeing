@@ -18,7 +18,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class AdapterEvent extends RecyclerView.Adapter<AdapterEvent.HolderOngoingEvent> {
+public class AdapterEvent extends RecyclerView.Adapter<AdapterEvent.HolderOngoingEvent> { 
 
 
     private Context context;

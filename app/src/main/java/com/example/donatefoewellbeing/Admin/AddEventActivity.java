@@ -57,6 +57,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -209,8 +211,8 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
         pd.setCanceledOnTouchOutside(false);
         firebaseAuth = FirebaseAuth.getInstance();
 
-        if(passedIntent != null){
-             oldlatLng = new LatLng(passedIntent.getLatitude(),passedIntent.getLongitude());
+        if (passedIntent != null) {
+            oldlatLng = new LatLng(passedIntent.getLatitude(), passedIntent.getLongitude());
         }
 
 //        Places.initialize(getApplicationContext(), "AIzaSyDAksT1L6mUK7tjcGIDlym8B9cjh5aucsg");
@@ -249,7 +251,6 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
         checkUserStatus();
 
     }
-
 
 
     private void updateLabel() {
@@ -446,15 +447,23 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
     }
 
     private void pickFromCamera() {
-        ContentValues cv = new ContentValues();
-        cv.put(MediaStore.Images.Media.TITLE, "Temp_Image Title");
-        cv.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image Description");
-
-        image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
-        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
+//        ContentValues cv = new ContentValues();
+//        cv.put(MediaStore.Images.Media.TITLE, "Temp_Image Title");
+//        cv.put(MediaStore.Images.Media.DESCRIPTION, "Temp_Image Description");
+//
+//        image_uri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, cv);
+//
+//        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, image_uri);
+//        startActivityForResult(intent, IMAGE_PICK_CAMERA_CODE);
+        CropImage.activity()
+                .setGuidelines(CropImageView.Guidelines.ON)
+//                .setCropShape(CropImageView.CropShape.RECTANGLE)
+                .setAspectRatio(90, 90)
+                .setActivityTitle("Crop Image")
+                .setFixAspectRatio(true)
+                .setCropMenuCropButtonTitle("Done")
+                .start(this);
     }
 
     private void pickFromGallery() {
@@ -528,22 +537,51 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
 
         if (resultCode == RESULT_OK) {
             if (requestCode == IMAGE_PICK_GALLERY_CODE) {
+//                image_uri = data.getData();
+//                eventPicIv.setImageURI(image_uri);
+
                 image_uri = data.getData();
+                CropImage.activity(image_uri)
+                        .setGuidelines(CropImageView.Guidelines.ON)
+//                        .setCropShape(CropImageView.CropShape.RECTANGLE)
+                        .setAspectRatio(90, 90)
+                        .setActivityTitle("Crop Image")
+                        .setFixAspectRatio(true)
+                        .setCropMenuCropButtonTitle("Done")
+                        .start(this);
+
+
+            }
+//            else if (requestCode == IMAGE_PICK_CAMERA_CODE) {
+//                eventPicIv.setImageURI(image_uri);
+//            }
+        }
+
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                image_uri = result.getUri();
                 eventPicIv.setImageURI(image_uri);
-            } else if (requestCode == IMAGE_PICK_CAMERA_CODE) {
-                eventPicIv.setImageURI(image_uri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception e = result.getError();
+                Toast.makeText(this, "" + e, Toast.LENGTH_SHORT).show();
+            }
+
+        }
+
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                eventPicIv.setImageURI(resultUri);
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+                Toast.makeText(this, "" + error, Toast.LENGTH_SHORT).show();
             }
         }
 
-//        if (resultCode == 100 && resultCode == RESULT_OK) {
-//            com.google.android.libraries.places.api.model.Place place = Autocomplete.getPlaceFromIntent(data);
-//            eventLocationEt.setText(place.getAddress());
-//            Toast.makeText(this, "Latitude and Longitude = " + place.getLatLng(), Toast.LENGTH_SHORT).show();
-//        } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-//            Status status = Autocomplete.getStatusFromIntent(data);
-//            Toast.makeText(getApplicationContext(), "" + status, Toast.LENGTH_SHORT).show();
-//
-//        }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -571,14 +609,13 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
 
             }
             Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(currentLocation != null)
+            if (currentLocation != null)
                 return currentLocation;
-            else{
+            else {
                 currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
                 return currentLocation;
             }
-        }
-        else{
+        } else {
             // ask the user to turn on the GPS
             return null;
         }
@@ -591,14 +628,14 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
         taskFlag = 0;
         // showing the current location
         final Location location = getLocation();
-        LatLng currentLoc = new LatLng(location.getLatitude(),location.getLongitude());
-        if(passedIntent != null){
+        LatLng currentLoc = new LatLng(location.getLatitude(), location.getLongitude());
+        if (passedIntent != null) {
 
             oldMarker = mMap.addMarker(new MarkerOptions().position(oldlatLng).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(oldlatLng,15));
-        }else{
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(oldlatLng, 15));
+        } else {
             newMarkr = mMap.addMarker(new MarkerOptions().position(currentLoc).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,15));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc, 15));
 
         }
 
@@ -606,15 +643,14 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
         mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
 
 
-
         // https://stackoverflow.com/questions/24302112/how-to-get-the-latitude-and-longitude-of-location-where-user-taps-on-the-map-in
         mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
             @Override
             public void onMapLongClick(LatLng latLng) {
                 // remove marker when new one added
-                if(taskFlag == 0) {
+                if (taskFlag == 0) {
                     taskFlag = 1;
-                    if(passedIntent != null){
+                    if (passedIntent != null) {
                         oldMarker.remove();
                     }
                     mMap.addMarker(new MarkerOptions().position(latLng).title("Custom location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
@@ -626,17 +662,17 @@ public class AddEventActivity extends AppCompatActivity implements OnMapReadyCal
                             .strokeWidth(5);
                     mMap.addCircle(circleOptions);
                     ltl = latLng;
-                    if(passedIntent != null){
+                    if (passedIntent != null) {
                         passedIntent.setLatitude(ltl.latitude);
                         passedIntent.setLongitude(ltl.longitude);
-                    }else{
+                    } else {
                         model.setLatitude(ltl.latitude);
                         model.setLongitude(ltl.longitude);
                     }
                 }
             }
         });
-        
+
     }
 
 //    public void addMarker(Place p) {

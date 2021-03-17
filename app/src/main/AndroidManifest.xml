@@ -21,6 +21,9 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Theme.DonateFoeWellBeing" />
+
         <activity android:name=".Admin.EditEventActivity" />
         <activity android:name=".Admin.EventDescriptionActivity" />
         <activity android:name=".Admin.AddEventActivity" />
@@ -40,6 +43,8 @@
             android:name=".User.DashboardUserActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".CommonActivities.LoginActivity" />
+
+
     </application>
 
 </manifest>
