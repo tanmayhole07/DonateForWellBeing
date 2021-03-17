@@ -15,7 +15,7 @@
         android:layout_marginTop="20dp"
         android:layout_height="80dp"
         android:layout_centerVertical="true"
-        android:src="@drawable/logo1"
+        android:src="@drawable/admin_profile_bg"
         app:civ_border_color="@color/colorGreen"
         app:civ_border_width="1dp" />
 

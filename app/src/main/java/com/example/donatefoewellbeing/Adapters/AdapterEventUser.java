@@ -14,35 +14,35 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.donatefoewellbeing.Admin.EventDescriptionActivity;
 import com.example.donatefoewellbeing.Models.ModelOngoingEvent;
 import com.example.donatefoewellbeing.R;
+import com.example.donatefoewellbeing.User.EventDescriptionActivityUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class AdapterEvent extends RecyclerView.Adapter<AdapterEvent.HolderOngoingEvent> { 
-
+public class AdapterEventUser extends RecyclerView.Adapter<AdapterEventUser.HolderEventUser> {
 
     private Context context;
-    public ArrayList<ModelOngoingEvent> ongoingEventList;
+    public ArrayList<ModelOngoingEvent> eventList;
     private String eventSection;
 
-    public AdapterEvent(Context context, ArrayList<ModelOngoingEvent> ongoingEventList, String eventSection) {
+    public AdapterEventUser(Context context, ArrayList<ModelOngoingEvent> eventList, String eventSection) {
         this.context = context;
-        this.ongoingEventList = ongoingEventList;
+        this.eventList = eventList;
         this.eventSection = eventSection;
     }
 
     @NonNull
     @Override
-    public HolderOngoingEvent onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public HolderEventUser onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(context).inflate(R.layout.row_ongoing_events, parent, false);
 
-        return new HolderOngoingEvent(view);
+        return new HolderEventUser(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull HolderOngoingEvent holder, int position) {
+    public void onBindViewHolder(@NonNull HolderEventUser holder, int position) {
 
-        ModelOngoingEvent modelOngoingEvent = ongoingEventList.get(position);
+        ModelOngoingEvent modelOngoingEvent = eventList.get(position);
         String eventName = modelOngoingEvent.getEventName();
         String eventDescription = modelOngoingEvent.getEventDescription();
         String eventDate = modelOngoingEvent.getDate();
@@ -65,25 +65,26 @@ public class AdapterEvent extends RecyclerView.Adapter<AdapterEvent.HolderOngoin
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, EventDescriptionActivity.class);
+                Intent intent = new Intent(context, EventDescriptionActivityUser.class);
                 intent.putExtra("eventId", eventId);
                 intent.putExtra("eventSection",eventSection);
                 context.startActivity(intent);
             }
         });
+        
     }
 
     @Override
     public int getItemCount() {
-        return ongoingEventList.size();
+        return eventList.size();
     }
 
-    class HolderOngoingEvent extends RecyclerView.ViewHolder {
+    class HolderEventUser extends RecyclerView.ViewHolder {
 
         private ImageView eventIv, nextIv;
         private TextView eventNameTv, eventDescriptionTv, eventDateTv, organizationNameTv;
 
-        public HolderOngoingEvent(@NonNull View itemView) {
+        public HolderEventUser(@NonNull View itemView) {
             super(itemView);
 
             eventIv = itemView.findViewById(R.id.eventIv);
@@ -94,6 +95,5 @@ public class AdapterEvent extends RecyclerView.Adapter<AdapterEvent.HolderOngoin
             nextIv = itemView.findViewById(R.id.nextIv);
         }
     }
-
-
+    
 }

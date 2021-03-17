@@ -172,9 +172,9 @@ public class DashboardUserActivity extends AppCompatActivity {
                             navUsername.setText(name);
 
                             try {
-                                Picasso.get().load(profileImage).placeholder(R.drawable.logo1).into(navProfileImage);
+                                Picasso.get().load(profileImage).placeholder(R.drawable.admin_profile_bg).into(navProfileImage);
                             } catch (Exception e) {
-                                navProfileImage.setImageResource(R.drawable.logo1);
+                                navProfileImage.setImageResource(R.drawable.admin_profile_bg);
                             }
 
                         }

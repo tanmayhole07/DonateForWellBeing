@@ -38,7 +38,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="true"
                 android:fontFamily="@font/poppins_medium"
-                android:text="Edit Events"
+                android:text="Edit Event"
                 android:textColor="@color/whiteCardColor"
                 android:textSize="16sp" />
 
@@ -57,13 +57,12 @@
                 android:layout_height="match_parent"
                 android:focusableInTouchMode="true"
                 android:gravity="center"
-                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <include layout="@layout/layout_add_event_1" />
+                <include layout="@layout/layout_edit_event" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -71,6 +70,7 @@
                 android:id="@+id/layout_add_product_2"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:visibility="gone"
                 android:focusableInTouchMode="true"
                 android:gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"

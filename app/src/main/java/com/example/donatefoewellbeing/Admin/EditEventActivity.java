@@ -69,7 +69,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 
-public class EditEventActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class EditEventActivity extends AppCompatActivity{
 
     private ImageView eventPicIv;
     private EditText eventNameEt, eventDescriptionEt, eventOrganizationNameEt, dateEt, timeEt, eventLocationEt;
@@ -200,17 +200,17 @@ public class EditEventActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-        step1CompleteFab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                inputData1();
-            }
-        });
+//        step1CompleteFab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                inputData1();
+//            }
+//        });
 
         updateEventBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                inputData2();
+                inputData();
             }
         });
 
@@ -223,9 +223,9 @@ public class EditEventActivity extends AppCompatActivity implements OnMapReadyCa
         pd.setCanceledOnTouchOutside(false);
         firebaseAuth = FirebaseAuth.getInstance();
 
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+//        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+//                .findFragmentById(R.id.map);
+//        mapFragment.getMapAsync(this);
 
         checkUserStatus();
 
@@ -241,13 +241,19 @@ public class EditEventActivity extends AppCompatActivity implements OnMapReadyCa
 
     private String eventName, eventDescription, eventOrganizationName, date, time, eventLocation;
 
-    private void inputData1() {
+    private void inputData() {
 
         eventName = eventNameEt.getText().toString().trim();
         eventDescription = eventDescriptionEt.getText().toString().trim();
         eventOrganizationName = eventOrganizationNameEt.getText().toString().trim();
         date = dateEt.getText().toString().trim();
         time = timeEt.getText().toString().trim();
+        eventLocation = eventLocationEt.getText().toString().trim();
+
+        if (TextUtils.isEmpty(eventLocation)) {
+            Toast.makeText(EditEventActivity.this, "Event time is required...", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         if (TextUtils.isEmpty(eventName)) {
             Toast.makeText(EditEventActivity.this, "Event Name is required...", Toast.LENGTH_SHORT).show();
@@ -275,29 +281,28 @@ public class EditEventActivity extends AppCompatActivity implements OnMapReadyCa
         }
 
 
-        layout2();
-
-    }
-
-    private void inputData2() {
-        eventLocation = eventLocationEt.getText().toString().trim();
-        if (TextUtils.isEmpty(eventLocation)) {
-            Toast.makeText(EditEventActivity.this, "Event time is required...", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         updateEvent();
     }
 
-    private void layout2() {
-        layout_add_product_2.setVisibility(View.VISIBLE);
-        layout_add_product_1.setVisibility(View.GONE);
-    }
+//    private void inputData2() {
+//        eventLocation = eventLocationEt.getText().toString().trim();
+//        if (TextUtils.isEmpty(eventLocation)) {
+//            Toast.makeText(EditEventActivity.this, "Event time is required...", Toast.LENGTH_SHORT).show();
+//            return;
+//        }
+//
+//        updateEvent();
+//    }
 
-    private void layout1() {
-        layout_add_product_2.setVisibility(View.GONE);
-        layout_add_product_1.setVisibility(View.VISIBLE);
-    }
+//    private void layout2() {
+//        layout_add_product_2.setVisibility(View.VISIBLE);
+//        layout_add_product_1.setVisibility(View.GONE);
+//    }
+
+//    private void layout1() {
+//        layout_add_product_2.setVisibility(View.GONE);
+//        layout_add_product_1.setVisibility(View.VISIBLE);
+//    }
 
     private void updateEvent() {
         pd.setMessage("Adding Event");
@@ -605,8 +610,6 @@ public class EditEventActivity extends AppCompatActivity implements OnMapReadyCa
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user != null) {
             mUID = user.getUid();
-            updateEventBtn.setText("Update Event");
-            layout1();
             loadEventDescription();
 
         } else {
@@ -615,80 +618,80 @@ public class EditEventActivity extends AppCompatActivity implements OnMapReadyCa
         }
     }
 
-    public Location getLocation() {
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager != null) {
-
-            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-            }
-            Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            if(currentLocation != null)
-                return currentLocation;
-            else{
-                currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-                return currentLocation;
-            }
-        }
-        else{
-            // ask the user to turn on the GPS
-            return null;
-        }
-    }
-
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        mMap = googleMap;
-
-        taskFlag = 0;
-        // showing the current location
-        final Location location = getLocation();
-        LatLng currentLoc = new LatLng(model.getLatitude(), model.getLongitude());
-        if(passedIntent != null){
-
-            oldMarker = mMap.addMarker(new MarkerOptions().position(oldlatLng).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(oldlatLng,15));
-        }else{
-            newMarkr = mMap.addMarker(new MarkerOptions().position(currentLoc).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,15));
-
-        }
-
-        mMap.animateCamera(CameraUpdateFactory.zoomIn());
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
-
-
-
-        // https://stackoverflow.com/questions/24302112/how-to-get-the-latitude-and-longitude-of-location-where-user-taps-on-the-map-in
-        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
-            @Override
-            public void onMapLongClick(LatLng latLng) {
-                // remove marker when new one added
-                if(taskFlag == 0) {
-                    taskFlag = 1;
-                    if(passedIntent != null){
-                        oldMarker.remove();
-                    }
-                    mMap.addMarker(new MarkerOptions().position(latLng).title("Custom location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
-                    CircleOptions circleOptions = new CircleOptions()
-                            .center(latLng)
-                            .radius(100)
-                            .fillColor(0x40ff0000)  //semi-transparent
-                            .strokeColor(Color.RED)
-                            .strokeWidth(5);
-                    mMap.addCircle(circleOptions);
-                    ltl = latLng;
-                    if(passedIntent != null){
-                        passedIntent.setLatitude(ltl.latitude);
-                        passedIntent.setLongitude(ltl.longitude);
-                    }else{
-                        model.setLatitude(ltl.latitude);
-                        model.setLongitude(ltl.longitude);
-                    }
-                }
-            }
-        });
-    }
+//    public Location getLocation() {
+//        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+//        if (locationManager != null) {
+//
+//            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION)
+//                    != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//            }
+//            Location currentLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+//            if(currentLocation != null)
+//                return currentLocation;
+//            else{
+//                currentLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+//                return currentLocation;
+//            }
+//        }
+//        else{
+//            // ask the user to turn on the GPS
+//            return null;
+//        }
+//    }
+//
+//    @Override
+//    public void onMapReady(GoogleMap googleMap) {
+//
+//        mMap = googleMap;
+//
+//        taskFlag = 0;
+//        // showing the current location
+//        final Location location = getLocation();
+//        LatLng currentLoc = new LatLng(model.getLatitude(), model.getLongitude());
+//        if(passedIntent != null){
+//
+//            oldMarker = mMap.addMarker(new MarkerOptions().position(oldlatLng).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(oldlatLng,15));
+//        }else{
+//            newMarkr = mMap.addMarker(new MarkerOptions().position(currentLoc).title("Current Location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+//            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(currentLoc,15));
+//
+//        }
+//
+//        mMap.animateCamera(CameraUpdateFactory.zoomIn());
+//        mMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+//
+//
+//
+//        // https://stackoverflow.com/questions/24302112/how-to-get-the-latitude-and-longitude-of-location-where-user-taps-on-the-map-in
+//        mMap.setOnMapLongClickListener(new GoogleMap.OnMapLongClickListener() {
+//            @Override
+//            public void onMapLongClick(LatLng latLng) {
+//                // remove marker when new one added
+//                if(taskFlag == 0) {
+//                    taskFlag = 1;
+//                    if(passedIntent != null){
+//                        oldMarker.remove();
+//                    }
+//                    mMap.addMarker(new MarkerOptions().position(latLng).title("Custom location").icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+//                    CircleOptions circleOptions = new CircleOptions()
+//                            .center(latLng)
+//                            .radius(100)
+//                            .fillColor(0x40ff0000)  //semi-transparent
+//                            .strokeColor(Color.RED)
+//                            .strokeWidth(5);
+//                    mMap.addCircle(circleOptions);
+//                    ltl = latLng;
+//                    if(passedIntent != null){
+//                        passedIntent.setLatitude(ltl.latitude);
+//                        passedIntent.setLongitude(ltl.longitude);
+//                    }else{
+//                        model.setLatitude(ltl.latitude);
+//                        model.setLongitude(ltl.longitude);
+//                    }
+//                }
+//            }
+//        });
+//    }
 }

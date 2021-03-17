@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.donatefoewellbeing.Adapters.AdapterEvent;
+import com.example.donatefoewellbeing.Adapters.AdapterEventUser;
 import com.example.donatefoewellbeing.Admin.Main.OngoingEventsActivity;
 import com.example.donatefoewellbeing.Models.ModelOngoingEvent;
 import com.example.donatefoewellbeing.R;
@@ -73,7 +74,7 @@ public class OngoingEvents extends Fragment {
     private RecyclerView eventsRv;
 
     private ArrayList<ModelOngoingEvent> ongoingEventList;
-    private AdapterEvent adapterEvent;
+    private AdapterEventUser adapterEvent;
 
     String eventSection = "OngoingEvents";
 
@@ -108,7 +109,7 @@ public class OngoingEvents extends Fragment {
                             ModelOngoingEvent modelOngoingEvent = ds.getValue(ModelOngoingEvent.class);
                             ongoingEventList.add(modelOngoingEvent);
                         }
-                        adapterEvent = new AdapterEvent(getActivity(), ongoingEventList, eventSection);
+                        adapterEvent = new AdapterEventUser(getActivity(), ongoingEventList, eventSection);
                         eventsRv.setAdapter(adapterEvent);
 
                     }
