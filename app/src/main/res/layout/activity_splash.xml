@@ -4,18 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/user_account_bg"
+    android:background="@drawable/splash"
     tools:context=".CommonActivities.SplashActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:text="DONATE FOR WELLBEING"
-        android:textColor="@color/colorOrange"
-        android:textSize="25sp"
-        android:fontFamily="@font/poppins_semiboldltalic"/>
+
 
 </RelativeLayout>

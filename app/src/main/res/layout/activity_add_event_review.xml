@@ -7,5 +7,178 @@
     tools:context=".User.AddEventReviewActivity">
 
 
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        tools:ignore="MissingConstraints">
+
+        <ImageButton
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:background="@null"
+            android:src="@drawable/ic_back_white" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Write Review"
+            android:textColor="@color/whiteCardColor"
+            android:textSize="16sp" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
+        android:layout_margin="20dp">
+
+        <TextView
+            android:id="@+id/eventNameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/poppins_medium"
+            android:text="Blood Donation Camp"
+            android:textColor="@color/black"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/eventDescriptionTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/eventNameTv"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/poppins_light"
+            android:text="Blood Dedo"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/eventOrganizationNameTv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/eventDescriptionTv"
+            android:layout_centerHorizontal="true"
+            android:fontFamily="@font/poppins_light"
+            android:text="Organization Name tv"
+            android:textSize="12sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/eventOrganizationNameTv"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:id="@+id/dateTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_light"
+                android:text="Date"
+                android:textSize="12sp" />
+            <TextView
+                android:id="@+id/timeTv"
+                android:layout_marginStart="2dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_light"
+                android:text="Time"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:id="@+id/divider"
+        android:layout_below="@+id/relativeLayout"
+        android:paddingStart="30dp"
+        android:paddingEnd="30dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/primaryTextColor"
+            android:paddingLeft="40dp"
+            android:paddingRight="40dp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/RelativeLayout2"
+        android:layout_below="@+id/divider">
+
+        <TextView
+            android:id="@+id/labelTv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
+            android:fontFamily="@font/poppins_light"
+            android:text="How was your experience with in this Event ?\nYour feedback is important to improve our quality of Events"
+            android:textAlignment="center"
+            android:textSize="10sp" />
+
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/labelTv"
+            android:layout_centerHorizontal="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:numStars="5" />
+
+        <EditText
+            android:id="@+id/reviewEt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ratingBar"
+            android:layout_margin="20dp"
+            android:background="@drawable/textview_shape"
+            android:fontFamily="@font/poppins_light"
+            android:gravity="top"
+            android:hint="Type Review..."
+            android:minHeight="100dp"
+            android:padding="10dp"
+            android:textColor="@color/black"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/submitBtn"
+            style="@style/loginButton"
+            android:layout_below="@+id/reviewEt"
+            android:layout_alignParentEnd="true"
+            android:layout_gravity="right"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/primaryTextColor"
+            android:fontFamily="@font/poppins_light"
+            android:text="Submit Review"
+            android:textSize="14sp" />
+
+    </RelativeLayout>
+
 
 </RelativeLayout>

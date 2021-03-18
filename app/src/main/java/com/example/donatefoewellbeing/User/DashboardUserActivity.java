@@ -61,7 +61,7 @@ public class DashboardUserActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard_user);
 
         pd = new ProgressDialog(this);
-        pd.setTitle("Please Title");
+        pd.setTitle("Please Wait");
         pd.setCanceledOnTouchOutside(false);
         firebaseAuth = FirebaseAuth.getInstance();
 

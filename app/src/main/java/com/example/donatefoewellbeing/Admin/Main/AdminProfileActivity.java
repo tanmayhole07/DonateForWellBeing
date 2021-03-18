@@ -87,7 +87,7 @@ public class AdminProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin_profile);
 
         pd = new ProgressDialog(this);
-        pd.setTitle("Please Title");
+        pd.setTitle("Please Wait");
         pd.setCanceledOnTouchOutside(false);
         firebaseAuth = FirebaseAuth.getInstance();
         user = firebaseAuth.getCurrentUser();
