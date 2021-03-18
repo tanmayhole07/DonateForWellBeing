@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:elevation="3dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:padding="15dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:gravity="center_vertical"
+                android:layout_height="match_parent"
+                android:layout_weight="2">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:id="@+id/profileIv"
+                    android:layout_centerHorizontal="true"
+                    app:civ_border_color="@color/primaryTextColor"
+                    app:civ_border_width="1dp"
+                    android:padding="1dp"
+                    android:src="@drawable/admin_profile_bg"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Tanmay Datta Hole"
+                    android:layout_marginTop="5dp"
+                    android:textAlignment="center"
+                    android:textColor="@color/primaryTextColor"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_light"
+                    android:layout_below="@+id/profileIv"/>
+
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingStart="30dp"
+                android:gravity="center"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/reviewTv"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:text="This is review of a user "
+                    android:textColor="@color/primaryTextColor"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/poppins_light"/>
+
+                <RatingBar
+                    android:id="@+id/ratingBar"
+                    style="@style/Widget.AppCompat.RatingBar.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/reviewTv"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginEnd="10dp"
+                    android:numStars="5" />
+
+                <TextView
+                    android:id="@+id/dateTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/reviewTv"
+                    android:layout_marginTop="5dp"
+                    android:layout_toEndOf="@+id/ratingBar"
+                    android:fontFamily="@font/poppins_light"
+                    android:text="dd/mm/yyyy"
+                    android:textColor="@color/colorGrey02"
+                    android:textSize="8sp" />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

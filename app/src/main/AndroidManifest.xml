@@ -16,7 +16,9 @@
         android:roundIcon="@drawable/ongoing_event_bg"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <activity android:name=".User.EventDescriptionActivityUser"></activity>
+        <activity android:name=".User.AddEventReviewActivity"></activity>
+        <activity android:name=".User.EventReviewsActivityUser" />
+        <activity android:name=".User.EventDescriptionActivityUser" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

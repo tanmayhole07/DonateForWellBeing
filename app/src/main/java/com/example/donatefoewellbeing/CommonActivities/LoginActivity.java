@@ -318,7 +318,7 @@ public class LoginActivity extends AppCompatActivity {
         hashMap.put("latitude", "");
         hashMap.put("longitude", "");
         hashMap.put("online", "true");
-        hashMap.put("profileImage", "");
+        hashMap.put("gender", "");
 
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("Users");
         ref.child(firebaseAuth.getUid()).setValue(hashMap)

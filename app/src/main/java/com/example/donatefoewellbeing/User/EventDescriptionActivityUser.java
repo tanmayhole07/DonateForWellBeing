@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,6 +23,7 @@ public class EventDescriptionActivityUser extends AppCompatActivity {
 
     private ImageView eventIv, trackLocationMapTv;
     private TextView editTv, deleteTv, eventNameTv, eventDescriptionTv, eventDateTv, eventTimeTv, eventLocationTv, eventOrganizationNameTv;
+    private Button eventReviewsBtn;
 
     private String eventId, eventSection, latitude, longitude;
 
@@ -41,6 +43,8 @@ public class EventDescriptionActivityUser extends AppCompatActivity {
         eventOrganizationNameTv = findViewById(R.id.eventOrganizationNameTv);
 //        trackLocationMapTv = findViewById(R.id.trackLocationMapTv);
 
+        eventReviewsBtn = findViewById(R.id.eventReviewsBtn);
+
         eventId = getIntent().getStringExtra("eventId");
         eventSection = getIntent().getStringExtra("eventSection");
 
@@ -48,6 +52,16 @@ public class EventDescriptionActivityUser extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 OpenMap();
+            }
+        });
+
+        eventReviewsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(EventDescriptionActivityUser.this, EventReviewsActivityUser.class);
+                intent.putExtra("eventId", eventId);
+                intent.putExtra("eventSection",eventSection);
+                startActivity(intent);
             }
         });
 

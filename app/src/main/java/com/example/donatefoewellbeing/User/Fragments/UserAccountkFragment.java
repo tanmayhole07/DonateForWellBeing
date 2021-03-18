@@ -2,7 +2,6 @@ package com.example.donatefoewellbeing.User.Fragments;
 
 import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -20,15 +19,16 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
-import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -141,6 +141,8 @@ public class UserAccountkFragment extends Fragment {
     private String[] storagePermissions;
 
     FusedLocationProviderClient fusedLocationProviderClient;
+    private Spinner spinner;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -196,7 +198,7 @@ public class UserAccountkFragment extends Fragment {
 
 
     private void showEditProfileDialog() {
-        String options[] = {"Edit Profile Picture", "Edit Name", "Edit Phone", "Change Password"};
+        String options[] = {"Edit Profile Picture", "Edit Name", "Edit Phone", "Edit Gender", "Change Password"};
         android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
         builder.setTitle("Choose Action");
         builder.setItems(options, new DialogInterface.OnClickListener() {
@@ -213,12 +215,78 @@ public class UserAccountkFragment extends Fragment {
                     pd.setMessage("Updating Phone");
                     showNamePhoneUpdateDialog("phone");
                 } else if (which == 3) {
+                    pd.setMessage("Edit Gender ");
+                    genderDailog();
+                } else if (which == 4) {
                     pd.setMessage("Changing Password ");
                     showChangePasswordDialog();
                 }
             }
         });
         builder.create().show();
+    }
+
+    private static final String[] paths = {"Male", "Female", "Prefer Not to Tell"};
+
+    private void genderDailog() {
+
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.dailog_edit_gender, null);
+        Button editGenderBtn = view.findViewById(R.id.editGenderBtn);
+        spinner = view.findViewById(R.id.spinner);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
+                android.R.layout.simple_spinner_item,paths);
+
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getActivity());
+        builder.setView(view);
+
+        android.app.AlertDialog dialog = builder.create();
+        dialog.show();
+
+        editGenderBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pd.show();
+                String value = spinner.getSelectedItem().toString();
+                HashMap<String, Object> hashMap = new HashMap<>();
+                hashMap.put("gender", value+"");
+
+                databaseReference.child(user.getUid()).updateChildren(hashMap)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                pd.dismiss();
+                                Toast.makeText(getActivity(), "Updated", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                pd.dismiss();
+                                Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+
+            }
+        });
+
+//        spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+//            @Override
+//            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+//
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> adapterView) {
+//
+//            }
+//        });
+
+
     }
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -367,12 +435,12 @@ public class UserAccountkFragment extends Fragment {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
 
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
-            if (resultCode == RESULT_OK){
+            if (resultCode == RESULT_OK) {
                 image_uri_camera = result.getUri();
                 uploadProfileCoverPhoto(image_uri_camera);
-            }else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE){
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception e = result.getError();
-                Toast.makeText(getActivity(), ""+e, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), "" + e, Toast.LENGTH_SHORT).show();
             }
 
         }
@@ -673,10 +741,12 @@ public class UserAccountkFragment extends Fragment {
                             String phone = "" + ds.child("phone").getValue();
                             String deliveryAddress = "" + ds.child("address").getValue();
                             String profileImage = "" + ds.child("image").getValue();
+                            String gender = ""+ ds.child("gender").getValue();
 
                             nameTv.setText(name);
                             emailTv.setText(email);
                             phoneTv.setText(phone);
+                            genderTv.setText(gender);
 
                             try {
                                 Picasso.get().load(profileImage).placeholder(R.drawable.logo1).into(profileIv);

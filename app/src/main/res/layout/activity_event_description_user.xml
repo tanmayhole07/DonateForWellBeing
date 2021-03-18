@@ -255,5 +255,20 @@
 
     </LinearLayout>
 
+    <Button
+        android:id="@+id/eventReviewsBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Event Reviews"
+        android:elevation="10dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:fontFamily="@font/poppins_light"
+        android:textSize="12sp"
+        android:background="@color/primaryTextColor"
+        android:layout_alignParentEnd="true"
+        android:textColor="@color/primaryTextColor"
+        android:layout_alignParentBottom="true"
+        style="@style/Widget.AppCompat.Button.Small"/>
 
 </RelativeLayout>
