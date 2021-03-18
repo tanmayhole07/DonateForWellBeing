@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">DonateFoeWellBeing</string>
+    <string name="app_name">DonateForWellBeing</string>
 
     <string name="register">REGISTER</string>
     <string name="login_email_hint">Email</string>
