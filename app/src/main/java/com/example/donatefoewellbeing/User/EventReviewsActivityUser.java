@@ -112,7 +112,6 @@ public class EventReviewsActivityUser extends AppCompatActivity {
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-
                         reviewArrayList.clear();
                         ratimgSum = 0;
                         for (DataSnapshot ds : snapshot.getChildren()) {
